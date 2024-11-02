@@ -38,19 +38,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Expo CLI
-        run: npm install -g expo-cli
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
 
       - name: Install dependencies
         run: npm install
 
-      - name: Install expo-updates
-        run: npm install expo-updates
-
-      - name: Deploy to Expo
+      - name: Deploy with EAS Update
         env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: expo publish --non-interactive
+          EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
+        run: eas update --non-interactive
 
   notify:
     runs-on: ubuntu-latest
