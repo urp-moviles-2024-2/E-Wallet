@@ -10,7 +10,7 @@ const Header = () => (
       <Text style={styles.balanceLabel}>Your available balance</Text>
     </View>
     <TouchableOpacity>
-      <Settings size={24} color="#333" />
+      <Settings style={styles.settings} />
     </TouchableOpacity>
   </View>
 );
@@ -21,6 +21,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 8,
+  },
+  settings: {
+    size: 24,
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderColor: '#e6e6e8',
+    borderRadius: 12,
+    padding: 4,
   },
   greeting: {
     fontSize: 24,

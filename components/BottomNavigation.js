@@ -12,7 +12,7 @@ const BottomNavigation = () => (
     <TouchableOpacity style={styles.navItem}>
       <BarChart2 size={24} color="#666" />
     </TouchableOpacity>
-    <TouchableOpacity style={[styles.navItem, styles.Scan]}>
+    <TouchableOpacity style={[styles.navItem, styles.scan]}>
       <Scan size={24} color="#666" />
     </TouchableOpacity>
     <TouchableOpacity style={styles.navItem}>
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#f3f4f6',
   },
-  Scan: {
+  scan: {
     backgroundColor: '#ffaf59',
     padding: 7,
     borderRadius: 50,
