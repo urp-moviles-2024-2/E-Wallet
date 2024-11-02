@@ -52,7 +52,7 @@ jobs:
       - name: Deploy with EAS Update
         env:
           EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
-        run: eas update --non-interactive
+        run: eas update --non-interactive --branch main --message "Deploying update via CI/CD pipeline"
 
   notify:
     runs-on: ubuntu-latest
