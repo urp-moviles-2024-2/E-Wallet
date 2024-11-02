@@ -1,16 +1,22 @@
+// src/App.js
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import NotificationScreen from './screens/NotificationScreen';
 import HomeScreen from './screens/HomeScreen';
+import BottomNavigation from './components/BottomNavigation';
 
-const Drawer = createDrawerNavigator();
+const Tab = createBottomTabNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="Home" component={HomeScreen} />
-      </Drawer.Navigator>
+      <Tab.Navigator
+        tabBar={(props) => <BottomNavigation {...props} />} // Usa BottomNavigation aquí
+        screenOptions={{ headerShown: false }}>
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Notifications" component={NotificationScreen} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 };

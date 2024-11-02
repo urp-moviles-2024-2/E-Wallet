@@ -1,9 +1,9 @@
-// src/components/Header.js
+// src/components/HomeHeader.js
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Settings } from 'lucide-react-native';
 
-const Header = () => (
+const HomeHeader = () => (
   <View style={styles.header}>
     <View>
       <Text style={styles.greeting}>Hello Andre,</Text>
@@ -40,4 +40,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Header;
+export default HomeHeader;

@@ -1,21 +1,20 @@
 // src/screens/HomeScreen.js
 import React from 'react';
 import { SafeAreaView, Text, StyleSheet } from 'react-native';
-import Header from '../components/Header';
+import HomeHeader from '../components/HomeHeader';
 import QuickActions from '../components/QuickActions';
 import PaymentGrid from '../components/PaymentGrid';
 import PromoSection from '../components/PromoSection';
 import BottomNavigation from '../components/BottomNavigation';
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <HomeHeader />
       <Text style={styles.balance}>$15,901</Text>
       <QuickActions />
       <PaymentGrid />
       <PromoSection />
-      <BottomNavigation />
     </SafeAreaView>
   );
 };
