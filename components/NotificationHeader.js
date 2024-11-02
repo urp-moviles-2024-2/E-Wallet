@@ -6,11 +6,11 @@ import { Settings, ChevronLeft } from 'lucide-react-native';
 const NotificationHeader = () => (
         <View style={styles.header}>
             <TouchableOpacity>
-                <ChevronLeft style={styles.button} />
+                <ChevronLeft style={styles.button} color={'#fff'} />
             </TouchableOpacity>
             <Text style={styles.title}>Notification</Text>
             <TouchableOpacity>
-                <Settings style={styles.button} />
+                <Settings style={styles.button} color={'#fff'} />
             </TouchableOpacity>
         </View>
 );

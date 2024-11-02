@@ -15,7 +15,10 @@ const App = () => {
         tabBar={(props) => <BottomNavigation {...props} />} // Usa BottomNavigation aquí
         screenOptions={{ headerShown: false }}>
         <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Statistics" component={StatisticScreen} />
+        <Tab.Screen name="Scan" component={ScanScreen} />
         <Tab.Screen name="Notifications" component={NotificationScreen} />
+        <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );

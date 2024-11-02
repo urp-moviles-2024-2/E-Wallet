@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         marginTop: 8,
         padding: 10,
+        paddingTop: 30,
         flex: 1,
     },
     sectionTitle: {

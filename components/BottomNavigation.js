@@ -8,16 +8,16 @@ const BottomNavigation = ({ navigation }) => (
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
             <Home size={24} color="#666" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('StatsScreen')}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Stats')}>
             <BarChart2 size={24} color="#666" />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.navItem, styles.scan]} onPress={() => navigation.navigate('ScanScreen')}>
+        <TouchableOpacity style={[styles.navItem, styles.scan]} onPress={() => navigation.navigate('Scan')}>
             <Scan size={24} color="#666" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Notifications')}>
             <Bell size={24} color="#666" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('ProfileScreen')}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profile')}>
             <User size={24} color="#666" />
         </TouchableOpacity>
     </View>
