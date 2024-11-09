@@ -9,17 +9,17 @@ import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 export const firebaseConfig = {
-  apiKey: "AIzaSyDVGj2nSj-YuGgs5fxa-n9lxIIscSZIpc4",
-  authDomain: "e-wallet-aca3b.firebaseapp.com",
-  projectId: "e-wallet-aca3b",
-  storageBucket: "e-wallet-aca3b.firebasestorage.app",
-  messagingSenderId: "715289967541",
-  appId: "1:715289967541:web:af7ff378640010c7f437fc",
-  measurementId: "G-6VJ0MYPPFE"
+  apiKey: "AIzaSyBU_ZKSgJdKJAtZSlCSVvBL01EFrX0N1fk",
+  authDomain: "e-wallet-6f4c7.firebaseapp.com",
+  projectId: "e-wallet-6f4c7",
+  storageBucket: "e-wallet-6f4c7.firebasestorage.app",
+  messagingSenderId: "521573930631",
+  appId: "1:521573930631:web:69db1a72bea1be70874a22",
+  measurementId: "G-1LWZW463DR"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const FIREBASE_AUTH = getAuth(app);
 export const FIREBASE_DATABASE = getFirestore(app);
-const analytics = getAnalytics(app);
+const analytics = getAnalytics(app); 
