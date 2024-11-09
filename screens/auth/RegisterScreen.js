@@ -36,6 +36,7 @@ const RegisterScreen = () => {
         nombre: nombre,
         correo: correo,
         contraseña: hashedPassword,  // Guarda la contraseña encriptada
+        saldo: 0
       };
   
       // Usamos addDoc para que Firestore cree un documento con un ID aleatorio
