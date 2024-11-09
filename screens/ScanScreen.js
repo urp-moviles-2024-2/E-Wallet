@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 
-const ScanScreen = ({ notifications = {} }) => {
+const ScanScreen = () => {
 
     return (
         <View></View>

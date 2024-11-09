@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 
-const StatisticScreen = ({ notifications = {} }) => {
+const StatisticScreen = () => {
 
     return (
         <View></View>
