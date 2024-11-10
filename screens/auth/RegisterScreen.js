@@ -8,12 +8,16 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
-import { addDoc, collection, getDoc, doc, setDoc, increment } from "firebase/firestore";
+import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../../config/FirebaseConfig";
+import {
+  addDoc,
+  collection,
+  setDoc,
+  doc,
+} from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
-import bcrypt from "bcryptjs";  // Importa bcryptjs
 
-const RegisterScreen = () => {
+const Register = () => {
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,33 +26,25 @@ const RegisterScreen = () => {
 
   const auth = FIREBASE_AUTH;
 
-  const agregarNuevoUsuario = async (nombre, correo, contraseña) => {
+  // Función para registrar un usuario en Firestore después de crearlo en Firebase Auth
+  const agregarNuevoUsuario = async (nombre, correo, uid) => {
     try {
-      // Encriptar la contraseña antes de guardarla
-      const salt = await bcrypt.genSalt(10);  // Genera un "sal" con 10 rondas
-      const hashedPassword = await bcrypt.hash(contraseña, salt);  // Crea el hash de la contraseña
-  
-      // Crear un nuevo documento con un ID aleatorio en la colección 'usuarios'
+      // Crear un nuevo documento en Firestore con el UID del usuario
       const usuariosRef = collection(FIREBASE_DATABASE, "usuarios");
-  
-      // Crear el objeto del usuario con la contraseña encriptada
+
+      // Datos del usuario a almacenar
       const nuevoUsuario = {
+        uid: uid, // UID del usuario
         nombre: nombre,
         correo: correo,
-        contraseña: hashedPassword,  // Guarda la contraseña encriptada
-        saldo: 0
+        saldo: 0, // Inicializa el saldo en 0
+        codigoqr: `codigoQR_${uid}`, // Un código QR único basado en el UID
       };
-  
-      // Usamos addDoc para que Firestore cree un documento con un ID aleatorio
-      const docRef = await addDoc(usuariosRef, nuevoUsuario);
-  
-      // Actualiza el documento con el ID del usuario (opcional)
-      await setDoc(docRef, {
-        id: docRef.id,  // Establece el ID del documento como el 'id' del usuario
-        codigoqr: `codigoQR_${docRef.id}`, // Un código QR único basado en el timestamp actual
-      }, { merge: true });
-  
-      console.log("Usuario añadido con ID aleatorio:", docRef.id);
+
+      // Usamos setDoc para establecer los datos del usuario con su UID
+      await setDoc(doc(usuariosRef, uid), nuevoUsuario);
+
+      console.log("Usuario añadido con ID:", uid);
     } catch (error) {
       console.error("Error al agregar usuario:", error);
       alert("Hubo un problema al registrar el usuario.");
@@ -58,13 +54,34 @@ const RegisterScreen = () => {
   const signUp = async () => {
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      await agregarNuevoUsuario(nombre, email, password);
+      // Crear usuario con correo y contraseña en Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // Registrar el usuario en Firestore con su UID
+      await agregarNuevoUsuario(nombre, email, user.uid);
+
       alert("Cuenta creada exitosamente!");
-      navigation.navigate("LoginScreen"); // Navegar a Login después de registrarse
+      navigation.navigate("Login"); // Redirigir a la pantalla de login
     } catch (error) {
-      console.error(error);
-      alert("Revisa los valores ingresados!");
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          alert("El correo electrónico ya está registrado.");
+          break;
+        case "auth/invalid-email":
+          alert("Correo electrónico no válido.");
+          break;
+        case "auth/weak-password":
+          alert("La contraseña debe tener al menos 6 caracteres.");
+          break;
+        default:
+          console.error(error);
+          alert("Error desconocido al registrar la cuenta.");
+      }
     } finally {
       setLoading(false);
     }
@@ -97,18 +114,18 @@ const RegisterScreen = () => {
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
-          <Button title="Create Account" onPress={signUp} />
+          <Button title="Crear Cuenta" onPress={signUp} disabled={loading} />
         )}
         <Button
           title="¿Ya tienes una cuenta? Inicia sesión"
-          onPress={() => navigation.navigate("LoginScreen")}
+          onPress={() => navigation.navigate("Login")}
         />
       </KeyboardAvoidingView>
     </View>
   );
 };
 
-export default RegisterScreen;
+export default Register;
 
 const styles = StyleSheet.create({
   container: {

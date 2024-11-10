@@ -8,7 +8,7 @@ const BottomNavigation = ({ navigation }) => (
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
             <Home size={24} color="#666" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Stats')}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Statistics')}>
             <BarChart2 size={24} color="#666" />
         </TouchableOpacity>
         <TouchableOpacity style={[styles.navItem, styles.scan]} onPress={() => navigation.navigate('Scan')}>

@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { FIREBASE_AUTH } from "../config/FirebaseConfig";
+import { FIREBASE_AUTH } from "../../config/FirebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen = () => {
@@ -23,7 +23,11 @@ const LoginScreen = () => {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate("HomeScreen");
+      // Navigate to the main app's tab navigator after login
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'AppTabs' }], // Reset and go to the tabs
+      });
     } catch (error) {
       console.error(error);
       alert("Cuenta no existente!");
@@ -57,7 +61,7 @@ const LoginScreen = () => {
         )}
         <Button
           title="¿No tienes una cuenta? ¡Regístrate!"
-          onPress={() => navigation.navigate("RegisterScreen")}
+          onPress={() => navigation.navigate("Register")}
         />
       </KeyboardAvoidingView>
     </View>

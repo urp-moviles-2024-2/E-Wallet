@@ -6,8 +6,8 @@ import NotificationScreen from "./screens/NotificationScreen";
 import BottomNavigation from "./components/BottomNavigation";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./screens/HomeScreen";
-import LoginScreen from "./screens/auth/LoginScreen";
-import RegisterScreen from "./screens/auth/RegisterScreen";
+import Login from "./screens/auth/LoginScreen";
+import Register from "./screens/auth/RegisterScreen";
 import StatisticScreen from "./screens/StatisticScreen";
 import ScanScreen from "./screens/ScanScreen";
 import ProfileScreen from "./screens/ProfileScreen";
@@ -18,9 +18,9 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const AuthStack = () => (
-  <Stack.Navigator initialRouteName="LoginScreen">
-    <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
-    <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }} />
+  <Stack.Navigator initialRouteName="Login">
+    <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+    <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
   </Stack.Navigator>
 );
 
@@ -42,10 +42,11 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
       setUser(user);
-      setLoading(false);
+      setLoading(false); // Cambia el estado de carga después de verificar al usuario
     });
+    return unsubscribe; // Limpia la suscripción cuando el componente se desmonta
   }, []);
 
   if (loading) {

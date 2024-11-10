@@ -7,7 +7,7 @@ import PaymentGrid from '../components/PaymentGrid';
 import PromoSection from '../components/PromoSection';
 import BottomNavigation from '../components/BottomNavigation';
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <HomeHeader />
