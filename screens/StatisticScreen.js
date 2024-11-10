@@ -5,7 +5,7 @@ import { View, Text, StyleSheet, FlatList } from 'react-native';
 const StatisticScreen = () => {
 
     return (
-        <View></View>
+        <Text></Text>
     );
 };
 

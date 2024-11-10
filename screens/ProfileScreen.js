@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
-import { Text, View, ActivityIndicator, StyleSheet, Button } from "react-native";
+import {
+  Text,
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  Button,
+} from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth"; // Importa el método signOut de Firebase Authentication
-import QRCode from 'react-native-qrcode-svg'; // Importa la librería QRCode
+import QRCode from "react-native-qrcode-svg"; // Importa la librería QRCode
 
 const ProfileScreen = () => {
   const [userData, setUserData] = useState(null);
@@ -17,7 +23,7 @@ const ProfileScreen = () => {
           // Obtén el documento de Firestore usando el UID del usuario
           const userRef = doc(FIREBASE_DATABASE, "usuarios", user.uid);
           const userDoc = await getDoc(userRef);
-          
+
           if (userDoc.exists()) {
             setUserData(userDoc.data()); // Guarda los datos del usuario en el estado
           } else {
@@ -55,18 +61,16 @@ const ProfileScreen = () => {
     <View style={styles.container}>
       <Text style={styles.heading}>Perfil de {userData.nombre}</Text>
       <Text>Email: {userData.correo}</Text>
-      <Text>Saldo: ${isNaN(userData.saldo) ? 0 : userData.saldo}</Text> {/* Verificación de NaN */}
-      
+      <Text>Saldo: ${isNaN(userData.saldo) ? 0 : userData.saldo}</Text>
       {/* Mostrar el código QR */}
       {userData.codigoqr && (
         <QRCode
-          value={userData.codigoqr}  // Usamos el código QR del usuario
-          size={200}  // Tamaño del código QR
-          color="black"  // Color del código QR
-          backgroundColor="white"  // Color de fondo
+          value={userData.codigoqr} // Usamos el código QR del usuario
+          size={200} // Tamaño del código QR
+          color="black" // Color del código QR
+          backgroundColor="white" // Color de fondo
         />
       )}
-      
       {/* Botón para cerrar sesión */}
       <Button title="Cerrar sesión" onPress={handleSignOut} />
     </View>

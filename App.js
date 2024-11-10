@@ -17,26 +17,6 @@ import { onAuthStateChanged } from "firebase/auth";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const AuthStack = () => (
-  <Stack.Navigator initialRouteName="Login">
-    <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-    <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
-  </Stack.Navigator>
-);
-
-const AppTabs = () => (
-  <Tab.Navigator
-    tabBar={(props) => <BottomNavigation {...props} />}
-    screenOptions={{ headerShown: false }}
-  >
-    <Tab.Screen name="Home" component={HomeScreen} />
-    <Tab.Screen name="Statistics" component={StatisticScreen} />
-    <Tab.Screen name="Scan" component={ScanScreen} />
-    <Tab.Screen name="Notifications" component={NotificationScreen} />
-    <Tab.Screen name="Profile" component={ProfileScreen} />
-  </Tab.Navigator>
-);
-
 const App = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -55,7 +35,23 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      {user ? <AppTabs /> : <AuthStack />}
+      {user ? (
+        <Tab.Navigator
+          tabBar={(props) => <BottomNavigation {...props} />}
+          screenOptions={{ headerShown: false }}
+        >
+          <Tab.Screen name="Home" component={HomeScreen} />
+          <Tab.Screen name="Statistics" component={StatisticScreen} />
+          <Tab.Screen name="Scan" component={ScanScreen} />
+          <Tab.Screen name="Notifications" component={NotificationScreen} />
+          <Tab.Screen name="Profile" component={ProfileScreen} />
+        </Tab.Navigator>
+      ) : (
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+          <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      )}
     </NavigationContainer>
   );
 };
