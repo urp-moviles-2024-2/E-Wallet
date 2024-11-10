@@ -38,7 +38,7 @@ const ProfileScreen = () => {
   const handleSignOut = async () => {
     try {
       await signOut(FIREBASE_AUTH); // Cierra sesión del usuario
-      console.log("Usuario cerrado sesión exitosamente");
+      // console.log("Usuario ha cerrado sesión exitosamente");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
       Alert.alert("Error", "Hubo un problema al cerrar sesión");

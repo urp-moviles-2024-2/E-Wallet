@@ -44,7 +44,7 @@ const Register = () => {
       // Usamos setDoc para establecer los datos del usuario con su UID
       await setDoc(doc(usuariosRef, uid), nuevoUsuario);
 
-      console.log("Usuario añadido con ID:", uid);
+      // console.log("Usuario añadido con ID:", uid);
     } catch (error) {
       console.error("Error al agregar usuario:", error);
       alert("Hubo un problema al registrar el usuario.");

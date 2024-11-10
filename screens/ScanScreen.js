@@ -21,8 +21,8 @@ const ScanScreen = () => {
   const handleBarCodeScanned = async ({ data }) => {
     // Dividir el ID del recibidor desde el QR
     const recipientId = data.split('_')[1]; // Asumiendo que el formato es algo como "prefix_uid"
-    console.log('Código QR escaneado:', data);  // Mostrar el código QR escaneado
-    console.log('ID del destinatario:', recipientId);  // Mostrar el ID del destinatario extraído
+    // console.log('Código QR escaneado:', data); 
+    // console.log('ID del destinatario:', recipientId);  
 
     if (scanned) return; // Prevenir escaneos duplicados
 
@@ -42,7 +42,7 @@ const ScanScreen = () => {
         });
 
         // Imprimir el nombre del destinatario en la consola
-        console.log('Nombre del destinatario:', recipient.nombre);
+        // console.log('Nombre del destinatario:', recipient.nombre);
 
         // Navegar a la pantalla de transacción con los datos del destinatario
         navigation.navigate("Transaction", { recipientData: {
