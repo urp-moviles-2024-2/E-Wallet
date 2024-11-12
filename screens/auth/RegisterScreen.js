@@ -9,12 +9,7 @@ import {
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../../config/FirebaseConfig";
-import {
-  addDoc,
-  collection,
-  setDoc,
-  doc,
-} from "firebase/firestore";
+import { setDoc, doc, collection } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 
 const Register = () => {
@@ -23,28 +18,29 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-
   const auth = FIREBASE_AUTH;
 
   // Función para registrar un usuario en Firestore después de crearlo en Firebase Auth
   const agregarNuevoUsuario = async (nombre, correo, uid) => {
     try {
-      // Crear un nuevo documento en Firestore con el UID del usuario
       const usuariosRef = collection(FIREBASE_DATABASE, "usuarios");
 
       // Datos del usuario a almacenar
       const nuevoUsuario = {
-        uid: uid, // UID del usuario
+        uid: uid,
         nombre: nombre,
         correo: correo,
-        saldo: 0, // Inicializa el saldo en 0
-        codigoqr: `codigoQR_${uid}`, // Un código QR único basado en el UID
+        saldo: 0,
+        codigoqr: `codigoQR_${uid}`,
+        fechaCreacion: new Date().toISOString(), // Fecha de creación en formato ISO
+        compras: [], // Inicializa el arreglo de compras vacío
+        transacciones: [], // Inicializa el arreglo de transacciones vacío
       };
 
-      // Usamos setDoc para establecer los datos del usuario con su UID
+      // Guarda el documento con el UID del usuario
       await setDoc(doc(usuariosRef, uid), nuevoUsuario);
 
-      // console.log("Usuario añadido con ID:", uid);
+      console.log("Usuario añadido con ID:", uid);
     } catch (error) {
       console.error("Error al agregar usuario:", error);
       alert("Hubo un problema al registrar el usuario.");
@@ -54,7 +50,6 @@ const Register = () => {
   const signUp = async () => {
     setLoading(true);
     try {
-      // Crear usuario con correo y contraseña en Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -62,11 +57,10 @@ const Register = () => {
       );
       const user = userCredential.user;
 
-      // Registrar el usuario en Firestore con su UID
       await agregarNuevoUsuario(nombre, email, user.uid);
 
       alert("Cuenta creada exitosamente!");
-      navigation.navigate("Login"); // Redirigir a la pantalla de login
+      navigation.navigate("Login");
     } catch (error) {
       switch (error.code) {
         case "auth/email-already-in-use":
