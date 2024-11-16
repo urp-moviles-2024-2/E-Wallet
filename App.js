@@ -48,7 +48,7 @@ const App = () => {
           <Tab.Screen name="Notifications" component={NotificationScreen} />
           <Tab.Screen name="Profile" component={ProfileScreen} />
           <Tab.Screen name="Transaction" component={TransactionScreen} />
-          <Tab.Screen name="PaymentScreen" component={PaymentScreen} />
+          <Tab.Screen name="Payment" component={PaymentScreen} />
         </Tab.Navigator>
       ) : (
         <Stack.Navigator initialRouteName="Login">

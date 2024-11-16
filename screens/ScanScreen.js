@@ -18,93 +18,81 @@ const ScanScreen = () => {
     })();
   }, []);
 
-  const handleUserBarCodeScanned = async ({ data }) => {
-    // Dividir el ID del recibidor desde el QR
-    const recipientId = data.split('_')[1]; // Asumiendo que el formato es algo como "prefix_uid"
-    // console.log('Código QR escaneado:', data); 
-    // console.log('ID del destinatario:', recipientId);  
-
+  const handleBarCodeScanned = async ({ data }) => {
     if (scanned) return; // Prevenir escaneos duplicados
-
     setScanned(true);
+    console.log("Código QR escaneado:", data);
 
     try {
-      // Buscar los datos del destinatario en Firebase usando el ID extraído del QR
-      const recipientRef = doc(FIREBASE_DATABASE, "usuarios", recipientId);
-      const recipientDoc = await getDoc(recipientRef);
+      // Comprobamos si el código es de un usuario o un producto
+      if (data.startsWith("user_")) {
+        // Si el código es de un usuario
+        const recipientId = data.split('_')[1]; // Extraemos el ID del destinatario
 
-      if (recipientDoc.exists()) {
-        const recipient = recipientDoc.data();
-        setRecipientData({
-          recipientUid: recipientId,  // Usamos el ID extraído del QR
-          recipientName: recipient.nombre,
-          recipientBalance: recipient.saldo || 0,
-        });
+        // Buscar los datos del destinatario en Firebase usando el ID extraído del QR
+        const recipientRef = doc(FIREBASE_DATABASE, "usuarios", recipientId);
+        const recipientDoc = await getDoc(recipientRef);
 
-        // Imprimir el nombre del destinatario en la consola
-        // console.log('Nombre del destinatario:', recipient.nombre);
+        if (recipientDoc.exists()) {
+          const recipient = recipientDoc.data();
+          setRecipientData({
+            recipientUid: recipientId,
+            recipientName: recipient.nombre,
+            recipientBalance: recipient.saldo || 0,
+          });
 
-        // Navegar a la pantalla de transacción con los datos del destinatario
-        navigation.navigate("Transaction", { recipientData: {
-          recipientUid: recipientId, 
-          recipientName: recipient.nombre,
-          recipientBalance: recipient.saldo || 0
-        } });
-      } else {
-        Alert.alert("Error", "No se encontró al destinatario.");
-      }
-    } catch (error) {
-      console.error("Error al obtener los datos del destinatario:", error);
-      Alert.alert("Error", "Hubo un problema al obtener los datos del destinatario.");
-    }
-
-    // Restablece el estado de escaneo después de un tiempo
-    setTimeout(() => {
-      setScanned(false);
-    }, 1000);
-  };
+          // Navegar a la pantalla de transacción con los datos del destinatario
+          navigation.navigate("Transaction", {
+            recipientData: {
+              recipientUid: recipientId,
+              recipientName: recipient.nombre,
+              recipientBalance: recipient.saldo || 0,
+            },
+          });
+        } else {
+          Alert.alert("Error", "No se encontró al destinatario.");
+        }
+      } else if (data.startsWith("product_")) {
+        // Si el código es de un producto
+        const productId = data.split('_')[1]; // Extraemos el ID del producto
   
-  const handleProductBarCodeScanned = async ({ data }) => {
-    // Dividir el ID del recibidor desde el QR
-    const productName = data; // Asumiendo que el formato es algo como "prefix_uid"
-    // console.log('Código QR escaneado:', data); 
-    // console.log('ID del destinatario:', recipientId);  
-
-    if (scanned) return; // Prevenir escaneos duplicados
-
-    setScanned(true);
-
-    try {
-      // Buscar los datos del destinatario en Firebase usando el ID extraído del QR
-      const productRef = doc(FIREBASE_DATABASE, "producto", productName);
-      const productDoc = await getDoc(productRef);
-
-      if (productDoc.exists()) {
-        const product = productDoc.data();
-        setRecipientData({
-          nombreProducto: productName,  // Usamos el ID extraído del QR
-          recipientName: product.nombre,
-          recipientBalance: recipient.saldo || 0,
-        });
-
-        // Imprimir el nombre del destinatario en la consola
-        // console.log('Nombre del destinatario:', recipient.nombre);
-
-        // Navegar a la pantalla de transacción con los datos del destinatario
-        navigation.navigate("Transaction", { recipientData: {
-          recipientUid: recipientId, 
-          recipientName: recipient.nombre,
-          recipientBalance: recipient.saldo || 0
-        } });
+        // Buscar los datos del producto en Firebase usando el ID extraído del QR
+        const productRef = doc(FIREBASE_DATABASE, "producto", productId);
+        const productDoc = await getDoc(productRef);
+  
+        if (productDoc.exists()) {
+          const product = productDoc.data();
+          setRecipientData({
+            productName: product.nombre,  // Usamos el nombre del producto
+            productPrice: product.precio,
+            productQuantity: product.cantidad,
+            productSource: product.fuente,
+            productCode: product.codigoProducto,
+          });
+  
+          // Navegar a la pantalla de pago con los datos del producto
+          navigation.navigate("Payment", {
+            product: {
+              id: productId,
+              nombre: product.nombre,
+              precio: product.precio,
+              cantidad: product.cantidad,
+              fuente: product.fuente,
+              codigoProducto: product.codigoProducto,
+            },
+          });
+        } else {
+          Alert.alert("Error", "No se encontró el producto.");
+        }
       } else {
-        Alert.alert("Error", "No se encontró al destinatario.");
+        Alert.alert("Error", "El código QR no corresponde a un producto válido.");
       }
     } catch (error) {
-      console.error("Error al obtener los datos del destinatario:", error);
-      Alert.alert("Error", "Hubo un problema al obtener los datos del destinatario.");
+      console.error("Error al procesar el código QR:", error);
+      Alert.alert("Error", "Hubo un problema al procesar el código QR.");
     }
-
-    // Restablece el estado de escaneo después de un tiempo
+  
+    // Restablecer el estado de escaneo después de un tiempo
     setTimeout(() => {
       setScanned(false);
     }, 1000);
@@ -123,7 +111,7 @@ const ScanScreen = () => {
       <CameraView
         style={StyleSheet.absoluteFillObject}
         facing="back"
-        onBarcodeScanned={handleUserBarCodeScanned}
+        onBarcodeScanned={handleBarCodeScanned}
       />
       <View style={styles.overlay}>
         <Text style={styles.instructions}>

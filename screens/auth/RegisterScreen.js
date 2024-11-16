@@ -31,7 +31,7 @@ const Register = () => {
         nombre: nombre,
         correo: correo,
         saldo: 0,
-        codigoqr: `codigoQR_${uid}`,
+        codigoqr: `user_${uid}`,
         fechaCreacion: new Date().toISOString(), // Fecha de creación en formato ISO
         compras: [], // Inicializa el arreglo de compras vacío
         transacciones: [], // Inicializa el arreglo de transacciones vacío

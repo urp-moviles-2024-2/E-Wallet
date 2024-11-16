@@ -15,7 +15,8 @@ import QRCode from "react-qr-code";
 
 const ProfileScreen = () => {
   const [userData, setUserData] = useState(null);
-  const [transactions, setTransactions] = useState([]);
+  const [personTransactions, setPersonTransactions] = useState([]);
+  const [commerceTransactions, setCommerceTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const user = FIREBASE_AUTH.currentUser;
 
@@ -34,10 +35,7 @@ const ProfileScreen = () => {
           }
         } catch (error) {
           console.error("Error al obtener los datos del usuario:", error);
-          Alert.alert(
-            "Error",
-            "Hubo un problema al obtener los datos del usuario"
-          );
+          Alert.alert("Error", "Hubo un problema al obtener los datos del usuario");
         } finally {
           setLoading(false);
         }
@@ -50,18 +48,12 @@ const ProfileScreen = () => {
   const fetchTransactions = (transactions) => {
     if (!transactions) return;
 
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    // Convertir las transacciones de persona y comercio en arrays
+    const personTrans = transactions.personas ? Object.values(transactions.personas) : [];
+    const commerceTrans = transactions.comercio ? Object.values(transactions.comercio) : [];
 
-    const recentTransactions = transactions.filter((transaction) => {
-      if (transaction.timestamp && transaction.timestamp.seconds) {
-        const transactionDate = new Date(transaction.timestamp.seconds * 1000);
-        return transactionDate >= oneWeekAgo;
-      }
-      return false;
-    });
-
-    setTransactions(recentTransactions);
+    setPersonTransactions(personTrans);
+    setCommerceTransactions(commerceTrans);
   };
 
   const handleSignOut = async () => {
@@ -98,42 +90,45 @@ const ProfileScreen = () => {
         <Text>No se ha generado un código QR para este usuario.</Text>
       )}
 
-      <Text style={styles.subheading}>
-        Transacciones recientes (última semana):
-      </Text>
+      <Text style={styles.subheading}>Transacciones entre personas:</Text>
       <FlatList
-        data={transactions}
+        data={personTransactions}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => {
-          // Determine if the current user is the sender or recipient
           const isSender = item.senderUid === user.uid;
-
-          // Depending on whether the user is the sender or recipient, display the appropriate name
           const otherUserName = isSender ? item.recipientName : item.senderName;
-
-          // Determine the transaction type: "Transacción a" (if sending money) or "Transacción de" (if receiving money)
-          const transactionType =
-            item.type === "Enviado"
-              ? "Transacción a" // Sending money (purchase from store)
-              : "Transacción de"; // Receiving money (payment received)
+          const transactionType = item.type === "Enviado" ? "Transacción a" : "Transacción de";
 
           return (
             <View style={styles.transactionItem}>
-              <Text>
-                {transactionType}: {otherUserName}
-              </Text>
-              {item.nombreProducto ? (
-                <Text>Producto: {item.nombreProducto}</Text>
-              ) : ('')}
+              <Text>{transactionType}: {otherUserName}</Text>
               <Text>Monto: S/ {item.amount}</Text>
-              <Text>
-                Fecha:{" "}
-                {new Date(item.timestamp.seconds * 1000).toLocaleDateString()}
-              </Text>
+              <Text>Fecha: {new Date(item.timestamp.seconds * 1000).toLocaleDateString()}</Text>
             </View>
           );
         }}
-        ListEmptyComponent={<Text>No hay transacciones recientes.</Text>}
+        ListEmptyComponent={<Text>No hay transacciones recientes entre personas.</Text>}
+      />
+
+      <Text style={styles.subheading}>Transacciones de comercio:</Text>
+      <FlatList
+        data={commerceTransactions}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => {
+          const isSender = item.senderUid === user.uid;
+          const otherUserName = isSender ? item.recipientName : item.senderName;
+          const transactionType = item.type === "Enviado" ? "Compra a" : "Compra de";
+
+          return (
+            <View style={styles.transactionItem}>
+              <Text>{transactionType}: {otherUserName}</Text>
+              {item.nombreProducto && <Text>Producto: {item.nombreProducto}</Text>}
+              <Text>Monto: S/ {item.amount}</Text>
+              <Text>Fecha: {new Date(item.timestamp.seconds * 1000).toLocaleDateString()}</Text>
+            </View>
+          );
+        }}
+        ListEmptyComponent={<Text>No hay transacciones recientes de comercio.</Text>}
       />
 
       <Button title="Cerrar sesión" onPress={handleSignOut} />

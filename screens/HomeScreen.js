@@ -6,6 +6,7 @@ import {
   View,
   FlatList,
   TouchableOpacity,
+  Alert
 } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
 import { collection, query, where, getDocs } from "firebase/firestore";
@@ -17,21 +18,29 @@ import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
   const [balance, setBalance] = useState(0);
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState("Cargando...");
   const [products, setProducts] = useState([]); // Lista de productos
   const navigation = useNavigation();
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const user = FIREBASE_AUTH.currentUser;
-      if (user) {
-        const userRef = doc(FIREBASE_DATABASE, "usuarios", user.uid);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          setBalance(data.saldo || 0);
-          setUserName(data.nombre || "Usuario");
+      try {
+        const user = FIREBASE_AUTH.currentUser;
+        if (user) {
+          const userRef = doc(FIREBASE_DATABASE, "usuarios", user.uid);
+          const userDoc = await getDoc(userRef);
+
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            setBalance(data.saldo || 0);
+            setUserName(data.nombre || "Usuario");
+          } else {
+            Alert.alert("Error", "No se encontró información del usuario.");
+          }
         }
+      } catch (error) {
+        console.error("Error al obtener datos del usuario:", error);
+        Alert.alert("Error", "Hubo un problema al cargar los datos del usuario.");
       }
     };
 
@@ -49,6 +58,7 @@ const HomeScreen = () => {
         setProducts(productsData);
       } catch (error) {
         console.error("Error al obtener productos:", error);
+        Alert.alert("Error", "Hubo un problema al cargar los productos.");
       }
     };
 
@@ -57,7 +67,7 @@ const HomeScreen = () => {
   }, []);
 
   const handleProductPress = (product) => {
-    navigation.navigate("PaymentScreen", { product });
+    navigation.navigate("Payment", { product });
   };
 
   const renderProduct = ({ item }) => (
@@ -74,10 +84,10 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.userName}>Hello, {userName},</Text>
-          <Text style={styles.balance}>Your available balance: S/ {balance}</Text>
-        </View>
+        <Text style={styles.userName}>Hola, {userName}</Text>
+        <Text style={styles.balance}>
+          Saldo disponible: S/ {balance.toFixed(2)}
+        </Text>
       </View>
       <QuickActions />
       <PaymentGrid />
@@ -88,6 +98,11 @@ const HomeScreen = () => {
           data={products}
           renderItem={renderProduct}
           keyExtractor={(item) => item.id}
+          ListEmptyComponent={
+            <Text style={styles.noProducts}>
+              No hay productos disponibles en este momento.
+            </Text>
+          }
         />
       </View>
     </SafeAreaView>
