@@ -1,16 +1,25 @@
-// src/screens/HomeScreen.js
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity } from "react-native";
+import {
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  View,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import QuickActions from "../components/QuickActions";
 import PaymentGrid from "../components/PaymentGrid";
 import PromoSection from "../components/PromoSection";
-import { Settings } from 'lucide-react-native';
+import { doc, getDoc } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
   const [balance, setBalance] = useState(0);
   const [userName, setUserName] = useState("");
+  const [products, setProducts] = useState([]); // Lista de productos
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -26,8 +35,41 @@ const HomeScreen = () => {
       }
     };
 
+    const fetchProducts = async () => {
+      try {
+        const productsRef = collection(FIREBASE_DATABASE, "producto");
+        const productsQuery = query(productsRef, where("cantidad", ">", 0)); // Solo productos disponibles
+        const querySnapshot = await getDocs(productsQuery);
+
+        const productsData = querySnapshot.docs.map((doc) => ({
+          id: doc.id, // Agrega el ID del documento
+          ...doc.data(),
+        }));
+
+        setProducts(productsData);
+      } catch (error) {
+        console.error("Error al obtener productos:", error);
+      }
+    };
+
     fetchUserData();
+    fetchProducts();
   }, []);
+
+  const handleProductPress = (product) => {
+    navigation.navigate("PaymentScreen", { product });
+  };
+
+  const renderProduct = ({ item }) => (
+    <TouchableOpacity onPress={() => handleProductPress(item)}>
+      <View style={styles.productItem}>
+        <Text style={styles.productName}>{item.nombre}</Text>
+        <Text style={styles.productDetails}>
+          Precio: S/ {item.precio} | Cantidad: {item.cantidad}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -36,13 +78,18 @@ const HomeScreen = () => {
           <Text style={styles.userName}>Hello, {userName},</Text>
           <Text style={styles.balance}>Your available balance: S/ {balance}</Text>
         </View>
-        {/* <TouchableOpacity>
-          <Settings style={styles.settings} />
-        </TouchableOpacity> */}
       </View>
       <QuickActions />
       <PaymentGrid />
       <PromoSection />
+      <View style={styles.productsSection}>
+        <Text style={styles.sectionHeading}>Productos Disponibles</Text>
+        <FlatList
+          data={products}
+          renderItem={renderProduct}
+          keyExtractor={(item) => item.id}
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -53,10 +100,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 16,
   },
-  heading: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
+  header: {
+    marginBottom: 16,
   },
   balance: {
     fontSize: 24,
@@ -68,9 +113,29 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginVertical: 16,
   },
-  // settings: {
-  //   right: 10
-  // }
+  productsSection: {
+    marginTop: 24,
+  },
+  sectionHeading: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  productItem: {
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    marginBottom: 8,
+  },
+  productName: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  productDetails: {
+    fontSize: 16,
+    color: "#555",
+  },
 });
 
 export default HomeScreen;

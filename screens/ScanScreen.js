@@ -18,7 +18,7 @@ const ScanScreen = () => {
     })();
   }, []);
 
-  const handleBarCodeScanned = async ({ data }) => {
+  const handleUserBarCodeScanned = async ({ data }) => {
     // Dividir el ID del recibidor desde el QR
     const recipientId = data.split('_')[1]; // Asumiendo que el formato es algo como "prefix_uid"
     // console.log('Código QR escaneado:', data); 
@@ -63,6 +63,52 @@ const ScanScreen = () => {
       setScanned(false);
     }, 1000);
   };
+  
+  const handleProductBarCodeScanned = async ({ data }) => {
+    // Dividir el ID del recibidor desde el QR
+    const productName = data; // Asumiendo que el formato es algo como "prefix_uid"
+    // console.log('Código QR escaneado:', data); 
+    // console.log('ID del destinatario:', recipientId);  
+
+    if (scanned) return; // Prevenir escaneos duplicados
+
+    setScanned(true);
+
+    try {
+      // Buscar los datos del destinatario en Firebase usando el ID extraído del QR
+      const productRef = doc(FIREBASE_DATABASE, "producto", productName);
+      const productDoc = await getDoc(productRef);
+
+      if (productDoc.exists()) {
+        const product = productDoc.data();
+        setRecipientData({
+          nombreProducto: productName,  // Usamos el ID extraído del QR
+          recipientName: product.nombre,
+          recipientBalance: recipient.saldo || 0,
+        });
+
+        // Imprimir el nombre del destinatario en la consola
+        // console.log('Nombre del destinatario:', recipient.nombre);
+
+        // Navegar a la pantalla de transacción con los datos del destinatario
+        navigation.navigate("Transaction", { recipientData: {
+          recipientUid: recipientId, 
+          recipientName: recipient.nombre,
+          recipientBalance: recipient.saldo || 0
+        } });
+      } else {
+        Alert.alert("Error", "No se encontró al destinatario.");
+      }
+    } catch (error) {
+      console.error("Error al obtener los datos del destinatario:", error);
+      Alert.alert("Error", "Hubo un problema al obtener los datos del destinatario.");
+    }
+
+    // Restablece el estado de escaneo después de un tiempo
+    setTimeout(() => {
+      setScanned(false);
+    }, 1000);
+  };
 
   if (hasPermission === null) {
     return <Text>Solicitando permiso para acceder a la cámara...</Text>;
@@ -77,7 +123,7 @@ const ScanScreen = () => {
       <CameraView
         style={StyleSheet.absoluteFillObject}
         facing="back"
-        onBarcodeScanned={handleBarCodeScanned}
+        onBarcodeScanned={handleUserBarCodeScanned}
       />
       <View style={styles.overlay}>
         <Text style={styles.instructions}>

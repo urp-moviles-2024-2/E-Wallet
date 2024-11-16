@@ -10,26 +10,25 @@ import {
 } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
-import { signOut } from "firebase/auth"; // Importa el método signOut de Firebase Authentication
+import { signOut } from "firebase/auth";
 import QRCode from "react-qr-code";
 
 const ProfileScreen = () => {
   const [userData, setUserData] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const user = FIREBASE_AUTH.currentUser; // Obtén el usuario autenticado actualmente
+  const user = FIREBASE_AUTH.currentUser;
 
   useEffect(() => {
     if (user) {
       const fetchUserData = async () => {
         try {
-          // Obtén el documento de Firestore usando el UID del usuario
           const userRef = doc(FIREBASE_DATABASE, "usuarios", user.uid);
           const userDoc = await getDoc(userRef);
 
           if (userDoc.exists()) {
-            setUserData(userDoc.data()); // Guarda los datos del usuario en el estado
-            fetchTransactions(userDoc.data().transacciones); // Obtén las transacciones
+            setUserData(userDoc.data());
+            fetchTransactions(userDoc.data().transacciones);
           } else {
             Alert.alert("Error", "No se encontró el documento del usuario");
           }
@@ -46,31 +45,28 @@ const ProfileScreen = () => {
 
       fetchUserData();
     }
-  }, [user]); // Solo se ejecuta cuando cambia el usuario
+  }, [user]);
 
-  // Función para obtener las transacciones de esta semana
   const fetchTransactions = (transactions) => {
-    if (!transactions) return; // Si no hay transacciones, no hacer nada
+    if (!transactions) return;
 
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); // Restamos 7 días de la fecha actual
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-    // Filtramos las transacciones de la última semana
     const recentTransactions = transactions.filter((transaction) => {
-      // Verificamos si la transacción tiene un timestamp válido
       if (transaction.timestamp && transaction.timestamp.seconds) {
-        const transactionDate = new Date(transaction.timestamp.seconds * 1000); // Convertir timestamp de Firestore a Date
+        const transactionDate = new Date(transaction.timestamp.seconds * 1000);
         return transactionDate >= oneWeekAgo;
       }
-      return false; // Si no tiene timestamp válido, la transacción no se considera
+      return false;
     });
 
-    setTransactions(recentTransactions); // Establecer transacciones recientes
+    setTransactions(recentTransactions);
   };
 
   const handleSignOut = async () => {
     try {
-      await signOut(FIREBASE_AUTH); // Cierra sesión del usuario
+      await signOut(FIREBASE_AUTH);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
       Alert.alert("Error", "Hubo un problema al cerrar sesión");
@@ -89,41 +85,57 @@ const ProfileScreen = () => {
     <View style={styles.container}>
       <Text style={styles.heading}>Perfil de {userData.nombre}</Text>
       <Text>Email: {userData.correo}</Text>
-      <Text>Saldo: ${isNaN(userData.saldo) ? 0 : userData.saldo}</Text>
+      <Text>Saldo: S/ {isNaN(userData.saldo) ? 0 : userData.saldo}</Text>
 
-      {/* Mostrar el código QR */}
       {userData.codigoqr ? (
         <QRCode
-          value={userData.codigoqr} // Usamos el código QR del usuario
-          size={200} // Tamaño del código QR
-          fgColor="black" // Color del código QR
-          bgColor="white" // Color de fondo
+          value={userData.codigoqr}
+          size={200}
+          fgColor="black"
+          bgColor="white"
         />
       ) : (
         <Text>No se ha generado un código QR para este usuario.</Text>
       )}
 
-      {/* Mostrar transacciones recientes de la última semana */}
       <Text style={styles.subheading}>
         Transacciones recientes (última semana):
       </Text>
       <FlatList
         data={transactions}
-        key={(item) => item.transactionId} // Aquí usamos el ID de la transacción como key
-        renderItem={({ item }) => (
-          <View style={styles.transactionItem}>
-            <Text>Transacción a: {item.recipientName}</Text>
-            <Text>Monto: S/ {item.amount}</Text>
-            <Text>
-              Fecha:{" "}
-              {new Date(item.timestamp.seconds * 1000).toLocaleDateString()}
-            </Text>
-          </View>
-        )}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => {
+          // Determine if the current user is the sender or recipient
+          const isSender = item.senderUid === user.uid;
+
+          // Depending on whether the user is the sender or recipient, display the appropriate name
+          const otherUserName = isSender ? item.recipientName : item.senderName;
+
+          // Determine the transaction type: "Transacción a" (if sending money) or "Transacción de" (if receiving money)
+          const transactionType =
+            item.type === "Enviado"
+              ? "Transacción a" // Sending money (purchase from store)
+              : "Transacción de"; // Receiving money (payment received)
+
+          return (
+            <View style={styles.transactionItem}>
+              <Text>
+                {transactionType}: {otherUserName}
+              </Text>
+              {item.nombreProducto ? (
+                <Text>Producto: {item.nombreProducto}</Text>
+              ) : ('')}
+              <Text>Monto: S/ {item.amount}</Text>
+              <Text>
+                Fecha:{" "}
+                {new Date(item.timestamp.seconds * 1000).toLocaleDateString()}
+              </Text>
+            </View>
+          );
+        }}
         ListEmptyComponent={<Text>No hay transacciones recientes.</Text>}
       />
 
-      {/* Botón para cerrar sesión */}
       <Button title="Cerrar sesión" onPress={handleSignOut} />
     </View>
   );

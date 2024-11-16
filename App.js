@@ -14,6 +14,7 @@ import ProfileScreen from "./screens/ProfileScreen";
 import TransactionScreen from "./screens/TransactionScreen";  // Importa la pantalla de transacción
 import { FIREBASE_AUTH } from "./config/FirebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import PaymentScreen from "./screens/PaymentScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -47,6 +48,7 @@ const App = () => {
           <Tab.Screen name="Notifications" component={NotificationScreen} />
           <Tab.Screen name="Profile" component={ProfileScreen} />
           <Tab.Screen name="Transaction" component={TransactionScreen} />
+          <Tab.Screen name="PaymentScreen" component={PaymentScreen} />
         </Tab.Navigator>
       ) : (
         <Stack.Navigator initialRouteName="Login">

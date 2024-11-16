@@ -71,9 +71,12 @@ const TransactionScreen = () => {
         transactionId,  // Añade el ID único de la transacción
         amount: transferAmount,
         senderUid: user.uid,
+        senderName, // Nombre del remitente
         recipientUid: recipientData.recipientUid,
+        recipientName: recipientData.recipientName, // Nombre del destinatario
         timestamp: new Date(),
       };
+      
 
       // Añadir la transacción al array `transacciones` en el remitente y destinatario
       await updateDoc(senderRef, {
