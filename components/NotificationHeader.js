@@ -17,10 +17,18 @@ const NotificationHeader = () => (
 
 const styles = StyleSheet.create({
     header: {
+        backgroundColor : '#105D38',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        margin: 20,
+        margin: 10,
+        height : 150,
+        borderBottomLeftRadius: 50,
+        borderBottomRightRadius: 50,
+        borderTopLeftRadius: 50,
+        borderTopRightRadius : 50,
+        paddingHorizontal: 30,
+
     },
     button: {
         size: 24,
