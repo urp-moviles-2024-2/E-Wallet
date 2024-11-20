@@ -1,11 +1,12 @@
-// src/components/PaymentButton.js
 import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5'; // Importa los íconos de FontAwesome5
 
-const PaymentButton = ({ icon: Icon, label }) => (
+const PaymentButton = ({ iconName, label, iconColor, backgroundColor }) => (
   <TouchableOpacity style={styles.paymentButton}>
-    <View style={styles.iconContainer}>
-      <Icon size={24} color="#333" />
+    <View style={[styles.iconContainer, { backgroundColor }]}>
+      {/* Usamos los íconos rellenos de FontAwesome5 */}
+      <Icon name={iconName} size={30} color={iconColor} />
     </View>
     <Text style={styles.paymentLabel}>{label}</Text>
   </TouchableOpacity>
@@ -18,9 +19,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#f3f4f6',
+    width: 60,
+    height: 60,
+    backgroundColor: '#f3f4f6', // Fondo por defecto
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
