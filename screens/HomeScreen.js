@@ -74,7 +74,7 @@ const HomeScreen = () => {
               resizeMode="contain"
             />
             <View style={styles.iconSettings}>
-              <Settings size={30} color="#000" style={styles.icon} />
+              <Settings size={20} color="#000" style={styles.icon} />
             </View>
           </View>
           <View style={styles.presentation}>
@@ -129,12 +129,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   iconSettings: {
-    borderWidth: 2, // Define el grosor del borde
-    borderColor: "#e6e6e8", // Color del borde
-    borderRadius: 8, // Opcional: redondear los bordes
-    padding: 8, // Añade un poco de espacio interno
-    alignItems: "center", // Centra el ícono horizontalmente
-    justifyContent: "center", // Centra el ícono verticalmente
+    width: 40,
+    height: 40,
+    borderWidth: 2, 
+    borderColor: "#e6e6e8", 
+    borderRadius: 8, 
+    padding: 8, 
+    alignItems: "center",
+    justifyContent: "center", 
   },
   presentation: {
     flexDirection: "row",

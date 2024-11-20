@@ -2,10 +2,17 @@ import React from "react";
 import { View, Text, StyleSheet, Button, Alert, Image } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
 import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
+import { ChevronLeft, HelpCircle } from 'lucide-react-native';
 
 const PaymentScreen = ({ route, navigation }) => {
   const { product } = route.params;
   const user = FIREBASE_AUTH.currentUser;
+
+  const formatDate = () => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const currentDate = new Date();
+    return currentDate.toLocaleDateString('en-US', options); // Esto formatea la fecha
+  };
 
   const handlePayment = async () => {
     if (!user) {
@@ -62,7 +69,7 @@ const PaymentScreen = ({ route, navigation }) => {
 
   const getImageSource = (fuente) => {
     switch (fuente) {
-      case "Starbucks":
+      case "Starbucks Coffee":
         return require('../assets/starbucks-logo.png');
       case "Netflix":
         return require('../assets/netflix_logo.png');
@@ -75,11 +82,26 @@ const PaymentScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Comprar Producto</Text>
-      <Image
-        source={getImageSource(product.fuente)}
-        style={styles.productImage}
-      />
+      <View style={styles.header}>
+        <View style={styles.iconos}>
+          <ChevronLeft size={24} color="#ffffff" />
+        </View>
+        <Text style={styles.title}>Comprar Producto</Text>
+        <View style={styles.iconos}>
+          <HelpCircle size={24} color="#ffffff" />
+        </View>
+      </View>
+      <View style={styles.containerProductImageDesc}>
+        <View style={styles.containerProductImage}>
+          <Image
+            source={getImageSource(product.fuente)}
+            style={styles.productImage}
+          />
+        </View>
+        <Text style={styles.fuenteName}>{product.fuente}</Text>
+      </View>
+
+      <Text style={styles.productName}>Payment on {formatDate()}</Text>
       <Text style={styles.productName}>Producto: {product.nombre}</Text>
       <Text style={styles.productPrice}>Precio: S/ {product.precio}</Text>
       <Text style={styles.productQuantity}>
@@ -98,16 +120,47 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     backgroundColor: "#105D38",
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  iconos: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#e6e6e8",
+    borderRadius: 8,
+    padding: 4,
+  },
   title: {
     fontSize: 24,
     color: "#fff",
     fontWeight: "bold",
-    marginBottom: 16,
     textAlign: "center",
   },
-  productImage:{
-    width: 200,
-    height: 200,
+  containerProductImage: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 80,
+    height: 80,
+    backgroundColor: "#E3FFEE",
+    borderRadius: 8
+  },
+  containerProductImageDesc: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  productImage: {
+    width: 48,
+    height: 48,
+  },
+  fuenteName: {
+    fontSize: 24,
+    fontWeight: 700,
+    color: "#ffffff"
   },
   productName: {
     fontSize: 20,
