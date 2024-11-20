@@ -16,7 +16,7 @@ const PromoSection = ({ products }) => {
   };
   const getImageSource = (fuente) => {
     switch (fuente) {
-      case "Starbucks":
+      case "Starbucks Coffee":
         return require('../assets/starbucks-logo.png');
       case "Netflix":
         return require('../assets/netflix_logo.png');

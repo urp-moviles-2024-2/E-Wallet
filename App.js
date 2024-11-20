@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -16,6 +15,9 @@ import { FIREBASE_AUTH } from "./config/FirebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import PaymentScreen from "./screens/PaymentScreen";
 import TransactionHistoryScreen from "./screens/TransactionHistoryScreen";
+
+// Importa View para usarlo en headerBackground
+import { View } from "react-native";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -41,7 +43,22 @@ const App = () => {
       {user ? (
         <Tab.Navigator
           tabBar={(props) => <BottomNavigation {...props} />}
-          screenOptions={{ headerShown: false }}
+          screenOptions={{
+            // Estilos del Header
+            headerStyle: {
+              backgroundColor: '#43C45E', // Color de fondo del header
+              height: 60, // Altura del header (ajustada para que se vea mejor)
+              borderBottomLeftRadius: 20, // Bordes redondeados (opcional)
+              borderBottomRightRadius: 20, // Bordes redondeados (opcional)
+            },
+            headerTitleStyle: {
+              color: '#fff', // Color del texto del título (blanco)
+              fontSize: 22, // Tamaño del título
+              fontWeight: 'bold', // Negrita
+            },
+            headerTintColor: '#fff', // Color de los íconos (back button) en el header
+            headerTitleAlign: 'center', // Centra el texto del título
+          }}
         >
           <Tab.Screen name="Home" component={HomeScreen} />
           <Tab.Screen name="Statistics" component={StatisticScreen} />
@@ -50,8 +67,7 @@ const App = () => {
           <Tab.Screen name="Profile" component={ProfileScreen} />
           <Tab.Screen name="Transaction" component={TransactionScreen} />
           <Tab.Screen name="PaymentScreen" component={PaymentScreen} />
-          <Tab.Screen name="TransactionHistoryScreen" component={TransactionHistoryScreen}
-/>
+          <Tab.Screen name="TransactionHistoryScreen" component={TransactionHistoryScreen} />
         </Tab.Navigator>
       ) : (
         <Stack.Navigator initialRouteName="Login">

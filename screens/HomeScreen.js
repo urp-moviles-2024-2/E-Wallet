@@ -15,7 +15,6 @@ import PaymentGrid from "../components/PaymentGrid";
 import PromoSection from "../components/PromoSection";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
-import { Settings } from "lucide-react-native";
 
 const HomeScreen = () => {
   const [balance, setBalance] = useState(0);
@@ -73,9 +72,6 @@ const HomeScreen = () => {
               style={styles.logoImage}
               resizeMode="contain"
             />
-            <View style={styles.iconSettings}>
-              <Settings size={30} color="#000" style={styles.icon} />
-            </View>
           </View>
           <View style={styles.presentation}>
             <View>
@@ -118,7 +114,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: 16,
-    paddingTop: 50,
   },
   header: {
     marginBottom: 16,

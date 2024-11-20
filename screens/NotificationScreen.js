@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from "react-native";
-import NotificationHeader from "../components/NotificationHeader";
+import { SafeAreaView, View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, Image } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import moneyIcon from '../assets/money.png';
@@ -129,8 +128,9 @@ const NotificationScreen = () => {
   
 
   return (
-    <View style={styles.container}>
-      <NotificationHeader />
+    <SafeAreaView style={styles.safeAreaViewStyle}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.container}>
       <View style={styles.notifications}>
         {}
         <View style={styles.sectionContainer}>
@@ -166,11 +166,18 @@ const NotificationScreen = () => {
         </View>
       </View>
     </View>
+      </ScrollView>
+    </SafeAreaView>
+    
   );
 };
 
 const styles = StyleSheet.create({
-  
+  safeAreaViewStyle: {
+    flex: 1,
+    paddingTop: 10,
+    paddingBottom: 30,
+  },
   notificationCard: {
     flexDirection: "row",
     alignItems: "center",
