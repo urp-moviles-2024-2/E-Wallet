@@ -23,7 +23,6 @@ const PromoSection = ({ products }) => {
       case "Enel":
         return require('../assets/enel_logo.png');
       default:
-        return require('../assets/popeyes_logo.png');
     }
   };
   const handleProductPress = (product) => {

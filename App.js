@@ -40,19 +40,35 @@ const App = () => {
     <NavigationContainer>
       {user ? (
         <Tab.Navigator
-          tabBar={(props) => <BottomNavigation {...props} />}
-          screenOptions={{ headerShown: false }}
-        >
-          <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="Statistics" component={StatisticScreen} />
-          <Tab.Screen name="Scan" component={ScanScreen} />
-          <Tab.Screen name="Notifications" component={NotificationScreen} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
-          <Tab.Screen name="Transaction" component={TransactionScreen} />
-          <Tab.Screen name="PaymentScreen" component={PaymentScreen} />
-          <Tab.Screen name="TransactionHistoryScreen" component={TransactionHistoryScreen}
-/>
-        </Tab.Navigator>
+        tabBar={(props) => <BottomNavigation {...props} />}
+        screenOptions={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: '#21c45d',
+            borderBottomLeftRadius: 20, // Ajusta el radio según prefieras
+            borderBottomRightRadius: 20,
+            height: 80, // Opcional: ajusta la altura del header si es necesario
+            overflow: 'hidden', // Asegura que los bordes redondeados se apliquen correctamente
+          },
+          headerTitleStyle: {
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: 20, // Cambia este valor para ajustar el tamaño del texto
+            textAlign: 'center',
+          },
+          headerTitleAlign: 'center', // Centra el texto del título
+        }}
+      >
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Statistics" component={StatisticScreen} />
+        <Tab.Screen name="Scan" component={ScanScreen} />
+        <Tab.Screen name="Notifications" component={NotificationScreen} />
+        <Tab.Screen name="Profile" component={ProfileScreen} />
+        <Tab.Screen name="Transaction" component={TransactionScreen} />
+        <Tab.Screen name="PaymentScreen" component={PaymentScreen} />
+        <Tab.Screen name="TransactionHistoryScreen" component={TransactionHistoryScreen} />
+      </Tab.Navigator>
+      
       ) : (
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />

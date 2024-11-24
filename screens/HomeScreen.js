@@ -73,17 +73,11 @@ const HomeScreen = () => {
               style={styles.logoImage}
               resizeMode="contain"
             />
-            <View style={styles.iconSettings}>
-              <Settings size={30} color="#000" style={styles.icon} />
-            </View>
           </View>
           <View style={styles.presentation}>
             <View>
               <Text style={styles.userName}>Hello {userName},</Text>
-              <Text style={styles.balance}>Your available balance</Text>
-            </View>
-            <View style={styles.conteinerCash}>
-              <Text style={styles.cash}>S/. {balance}</Text>
+              <Text style={styles.balance}>Your available balance S/. {balance}</Text>
             </View>
           </View>
         </View>
@@ -118,7 +112,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: 16,
-    paddingTop: 50,
   },
   header: {
     marginBottom: 16,
@@ -126,23 +119,15 @@ const styles = StyleSheet.create({
   headerfirst: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
-  },
-  iconSettings: {
-    borderWidth: 2, // Define el grosor del borde
-    borderColor: "#e6e6e8", // Color del borde
-    borderRadius: 8, // Opcional: redondear los bordes
-    padding: 8, // Añade un poco de espacio interno
-    alignItems: "center", // Centra el ícono horizontalmente
-    justifyContent: "center", // Centra el ícono verticalmente
   },
   presentation: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
   balance: {
-    fontSize: 14,
+    fontSize: 19,
     color: "#8f92a1",
+    fontWeight: "bold",
     marginBottom: 8,
   },
   conteinerCash: {
@@ -153,7 +138,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   userName: {
-    fontSize: 18,
+    fontSize: 40,
     fontWeight: "bold",
     marginVertical: 10,
   },

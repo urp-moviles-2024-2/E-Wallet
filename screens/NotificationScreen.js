@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from "react-native";
-import NotificationHeader from "../components/NotificationHeader";
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import moneyIcon from '../assets/money.png';
@@ -130,7 +129,6 @@ const NotificationScreen = () => {
 
   return (
     <View style={styles.container}>
-      <NotificationHeader />
       <View style={styles.notifications}>
         {}
         <View style={styles.sectionContainer}>
