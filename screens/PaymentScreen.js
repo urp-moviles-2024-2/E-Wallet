@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Button, Alert, Image } from "react-native";
+import { View, Text, StyleSheet, Alert, Image, TouchableOpacity } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
 import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 import { ChevronLeft, HelpCircle } from 'lucide-react-native';
@@ -67,18 +67,18 @@ const PaymentScreen = ({ route, navigation }) => {
     }
   };
 
-  const getImageSource = (fuente) => {
-    switch (fuente) {
-      case "Starbucks Coffee":
-        return require('../assets/starbucks-logo.png');
-      case "Netflix":
-        return require('../assets/netflix_logo.png');
-      case "Enel":
-        return require('../assets/enel_logo.png');
-      default:
-        return require('../assets/popeyes_logo.png');
-    }
-  };
+  // const getImageSource = (fuente) => {
+  //   switch (fuente) {
+  //     case "Starbucks Coffee":
+  //       return require('../assets/starbucks-logo.png');
+  //     case "Netflix":
+  //       return require('../assets/netflix_logo.png');
+  //     case "Enel":
+  //       return require('../assets/enel_logo.png');
+  //     default:
+  //       return require('../assets/popeyes_logo.png');
+  //   }
+  // };
 
   return (
     <View style={styles.container}>
@@ -86,7 +86,7 @@ const PaymentScreen = ({ route, navigation }) => {
         <View style={styles.iconos}>
           <ChevronLeft size={24} color="#ffffff" />
         </View>
-        <Text style={styles.title}>Comprar Producto</Text>
+        <Text style={styles.title}>Summary Transaction</Text>
         <View style={styles.iconos}>
           <HelpCircle size={24} color="#ffffff" />
         </View>
@@ -94,21 +94,26 @@ const PaymentScreen = ({ route, navigation }) => {
       <View style={styles.containerProductImageDesc}>
         <View style={styles.containerProductImage}>
           <Image
-            source={getImageSource(product.fuente)}
+            source={product.imagen}
             style={styles.productImage}
           />
         </View>
         <Text style={styles.fuenteName}>{product.fuente}</Text>
       </View>
 
-      <Text style={styles.productName}>Payment on {formatDate()}</Text>
-      <Text style={styles.productName}>Producto: {product.nombre}</Text>
-      <Text style={styles.productPrice}>Precio: S/ {product.precio}</Text>
-      <Text style={styles.productQuantity}>
-        Cantidad disponible: {product.cantidad}
-      </Text>
-      <Button title="Comprar" onPress={handlePayment} />
-      <Button title="Cancelar" onPress={() => navigation.goBack()} color="red" />
+      <Text style={styles.paymentOn}>Payment on {formatDate()}</Text>
+      <Text style={styles.productPrice}>S/.{parseFloat(product.precio).toFixed(2)}</Text>
+      <View style={styles.containerProductName}>
+        <Text style={styles.productName}>{product.nombre}</Text>
+      </View>
+      <View style={styles.containerButtons}>
+        <TouchableOpacity style={styles.buttons} onPress={handlePayment}>
+          <Text style={styles.buttonText}>Comprar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.buttons, styles.cancelButton]} onPress={() => navigation.goBack()}>
+          <Text style={styles.buttonText}>Cancelar</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -131,21 +136,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#e6e6e8",
+    borderColor: 'rgba(230, 230, 232, 0.3)',
     borderRadius: 8,
     padding: 4,
+    opacity: 20
   },
   title: {
     fontSize: 24,
     color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
+    marginBottom: 20
   },
   containerProductImage: {
     justifyContent: "center",
     alignItems: "center",
-    width: 80,
-    height: 80,
+    width: 200,
+    height: 200,
     backgroundColor: "#E3FFEE",
     borderRadius: 8
   },
@@ -154,13 +161,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   productImage: {
-    width: 48,
-    height: 48,
+    width: 150,
+    height: 150,
   },
   fuenteName: {
+    marginTop: 20,
     fontSize: 24,
     fontWeight: 700,
     color: "#ffffff"
+  },
+  paymentOn: {
+    fontSize: 14,
+    marginBottom: 8,
+    color: "#FFAE58",
+    textAlign: "center"
+  },
+  containerProductName: {
+    width: "90%",
+    height: 52,
+    padding: 10,
+    marginTop: 20,
+    backgroundColor: 'rgba(230, 230, 232, 0.3)',
+    borderRadius: 16,
+    alignSelf: 'center'
   },
   productName: {
     fontSize: 20,
@@ -168,8 +191,10 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   productPrice: {
-    fontSize: 18,
+    fontSize: 48,
     marginBottom: 8,
+    fontWeight: 600,
+    textAlign: "center",
     color: "#fff",
   },
   productQuantity: {
@@ -177,6 +202,31 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     color: "#f5f5f5",
   },
+  containerButtons: {
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: 20,
+    marginTop: 40
+  },
+  buttons: {
+    height: 54,
+    width: "40%",
+    backgroundColor: "#4CD080",
+    display: "flex",
+    justifyContent: "center",
+    borderRadius: 16,
+    margin: 10
+  },
+  buttonText: {
+    textAlign: "center",
+    color: "#fff",
+    fontWeight: 500,
+    fontSize: 16
+  },
+  cancelButton: {
+    backgroundColor: "red"
+  }
 });
 
 export default PaymentScreen;

@@ -14,18 +14,18 @@ const PromoSection = ({ products }) => {
   const getRandomColor = () => {
     return colors[Math.floor(Math.random() * colors.length)];
   };
-  const getImageSource = (fuente) => {
-    switch (fuente) {
-      case "Starbucks":
-        return require('../assets/starbucks-logo.png');
-      case "Netflix":
-        return require('../assets/netflix_logo.png');
-      case "Enel":
-        return require('../assets/enel_logo.png');
-      default:
-        return require('../assets/popeyes_logo.png');
-    }
-  };
+  // const getImageSource = (fuente) => {
+  //   switch (fuente) {
+  //     case "Starbucks":
+  //       return require('../assets/starbucks-logo.png');
+  //     case "Netflix":
+  //       return require('../assets/netflix_logo.png');
+  //     case "Enel":
+  //       return require('../assets/enel_logo.png');
+  //     default:
+  //       return require('../assets/popeyes_logo.png');
+  //   }
+  // };
   const handleProductPress = (product) => {
     navigation.navigate("PaymentScreen", { product });
   };
@@ -71,7 +71,7 @@ const PromoSection = ({ products }) => {
             </View>
             <View style={styles.containerPromoImage}>
               <Image
-                source={getImageSource(item.fuente)}
+                source={item.imagen}
                 style={styles.promoImage}
               />
             </View>
