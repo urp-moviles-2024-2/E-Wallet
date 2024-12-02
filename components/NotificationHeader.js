@@ -21,12 +21,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        margin: 10,
         height : 150,
-        borderBottomLeftRadius: 50,
-        borderBottomRightRadius: 50,
-        borderTopLeftRadius: 50,
-        borderTopRightRadius : 50,
         paddingHorizontal: 30,
 
     },

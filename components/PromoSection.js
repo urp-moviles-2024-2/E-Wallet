@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { TouchableOpacity, View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
@@ -10,22 +10,16 @@ const colors = ["#FFD2A6", "#FFAE58", "#4CD080"]
 
 const PromoSection = ({ products }) => {
   const navigation = useNavigation();
-  
-  const getRandomColor = () => {
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
-  // const getImageSource = (fuente) => {
-  //   switch (fuente) {
-  //     case "Starbucks":
-  //       return require('../assets/starbucks-logo.png');
-  //     case "Netflix":
-  //       return require('../assets/netflix_logo.png');
-  //     case "Enel":
-  //       return require('../assets/enel_logo.png');
-  //     default:
-  //       return require('../assets/popeyes_logo.png');
-  //   }
-  // };
+  const [productColors, setProductColors] = useState({});
+
+  useEffect(() => {
+    const colorsMap = products.reduce((acc, product) => {
+      acc[product.id] = colors[Math.floor(Math.random() * colors.length)];
+      return acc;
+    }, {});
+    setProductColors(colorsMap);
+  }, [products]);
+
   const handleProductPress = (product) => {
     navigation.navigate("PaymentScreen", { product });
   };
@@ -61,7 +55,10 @@ const PromoSection = ({ products }) => {
         {products.map((item) => (
           <TouchableOpacity
             key={item.id}
-            style={[styles.productCard, { backgroundColor: getRandomColor() }]}
+            style={[
+              styles.productCard,
+              { backgroundColor: productColors[item.id] || "#f5f5f5" },
+            ]}
             onPress={() => handleProductPress(item)}
           >
             <View style={styles.promoInformation}>

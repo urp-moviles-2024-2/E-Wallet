@@ -40,6 +40,7 @@ const HomeScreen = () => {
     const fetchProducts = async () => {
       try {
         const productsRef = collection(FIREBASE_DATABASE, "producto");
+        console.log(productsRef);
         const productsQuery = query(productsRef, where("cantidad", ">", 0)); // Solo productos disponibles
         const querySnapshot = await getDocs(productsQuery);
 
@@ -49,6 +50,7 @@ const HomeScreen = () => {
         }));
 
         setProducts(productsData);
+        console.log(productsData);
       } catch (error) {
         console.error("Error al obtener productos:", error);
       }
@@ -58,9 +60,6 @@ const HomeScreen = () => {
     fetchProducts();
   }, []);
 
-  const handleProductPress = (product) => {
-    navigation.navigate("PaymentScreen", { product });
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -90,7 +89,7 @@ const HomeScreen = () => {
 
         {/* Quick Actions and Promotions */}
         <QuickActions />
-        <PaymentGrid />
+        <PaymentGrid products={products} />
         <PromoSection products={products} />
 
         {/* Product List */}

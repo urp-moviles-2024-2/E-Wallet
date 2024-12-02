@@ -21,12 +21,12 @@ const NotificationScreen = () => {
   });
   const user = FIREBASE_AUTH.currentUser;
 
- 
+
   const calculateDaysDifference = (date) => {
     const now = new Date();
-    const itemDate = new Date(date.seconds * 1000); 
+    const itemDate = new Date(date.seconds * 1000);
     const diffInTime = now - itemDate;
-    return Math.floor(diffInTime / (1000 * 60 * 60 * 24)); 
+    return Math.floor(diffInTime / (1000 * 60 * 60 * 24));
   };
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const NotificationScreen = () => {
           id: doc.id,
           type: "Promo", // Identifica como promoción
           ...doc.data(),
-          fechacreacion: doc.data().fechacreacion || new Date(), 
+          fechacreacion: doc.data().fechacreacion || new Date(),
         }));
 
         allNotifications = allNotifications.concat(promotions);
@@ -55,14 +55,14 @@ const NotificationScreen = () => {
             const userData = userSnapshot.data();
             const transactions = (userData.transacciones || []).map((transaction) => ({
               ...transaction,
-              type: "Transaction", 
+              type: "Transaction",
             }));
 
             allNotifications = allNotifications.concat(transactions);
           }
         }
 
-        
+
         const today = [];
         const yesterday = [];
         const last7Days = [];
@@ -88,17 +88,17 @@ const NotificationScreen = () => {
     fetchNotifications();
   }, [user]);
 
-  
+
   const renderNotificationItem = ({ item }) => {
     return (
       <View style={styles.notificationCard}>
-        {}
+        { }
         {item.type === "Promo" ? (
           <Image source={images[Math.floor(Math.random() * images.length)]} style={styles.promoImage} />
         ) : (
-          <Image source={moneyIcon} style={styles.moneyImage} /> 
+          <Image source={moneyIcon} style={styles.moneyImage} />
         )}
-  
+
         {/* Texto principal de la notificación */}
         <View style={styles.textContainer}>
           {item.type === "Promo" ? (
@@ -117,60 +117,83 @@ const NotificationScreen = () => {
             </>
           )}
         </View>
-  
-        {}
+
+        { }
         <View style={[styles.tagContainer, item.type === "Promo" ? styles.promoTag : styles.infoTag]}>
           <Text style={styles.tagText}>{item.type === "Promo" ? "Promo" : "Info"}</Text>
         </View>
       </View>
     );
   };
-  
-  
+
+  const hasNotifications = notifications.today.length > 0 || notifications.yesterday.length > 0 || notifications.last7Days.length > 0;
 
   return (
     <View style={styles.container}>
       <NotificationHeader />
       <View style={styles.notifications}>
-        {}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>TODAY</Text>
-          <FlatList
-            data={notifications.today}
-            renderItem={renderNotificationItem}
-            keyExtractor={(item, index) => `${item.type}-${index}`}
-            ListEmptyComponent={<Text style={styles.emptyText}>No hay notificaciones para hoy.</Text>}
-          />
-        </View>
+        {!hasNotifications ? (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No hay notificaciones</Text>
+          </View>
+        ) : (
+          <>
+            {notifications.today.length > 0 && (
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>TODAY</Text>
+                <FlatList
+                  data={notifications.today}
+                  renderItem={renderNotificationItem}
+                  keyExtractor={(item, index) => `${item.type}-${index}`}
+                />
+              </View>
+            )}
 
-        {}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>YESTERDAY</Text>
-          <FlatList
-            data={notifications.yesterday}
-            renderItem={renderNotificationItem}
-            keyExtractor={(item, index) => `${item.type}-${index}`}
-            ListEmptyComponent={<Text style={styles.emptyText}>No hay notificaciones para ayer.</Text>}
-          />
-        </View>
+            {notifications.yesterday.length > 0 && (
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>YESTERDAY</Text>
+                <FlatList
+                  data={notifications.yesterday}
+                  renderItem={renderNotificationItem}
+                  keyExtractor={(item, index) => `${item.type}-${index}`}
+                />
+              </View>
+            )}
 
-        {}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>LAST 7 DAYS</Text>
-          <FlatList
-            data={notifications.last7Days}
-            renderItem={renderNotificationItem}
-            keyExtractor={(item, index) => `${item.type}-${index}`}
-            ListEmptyComponent={<Text style={styles.emptyText}>No hay notificaciones en los últimos 7 días.</Text>}
-          />
-        </View>
+            {notifications.last7Days.length > 0 && (
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>LAST 7 DAYS</Text>
+                <FlatList
+                  data={notifications.last7Days}
+                  renderItem={renderNotificationItem}
+                  keyExtractor={(item, index) => `${item.type}-${index}`}
+                />
+              </View>
+            )}
+          </>
+        )}
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  
+
+  container: {
+    backgroundColor: '#105D38',
+  },
+  notifications: {
+    backgroundColor: "#fff",
+    borderTopRightRadius: 32,
+    borderTopLeftRadius: 32,
+    height: "80vh"
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 50,
+  },
   notificationCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -186,10 +209,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   moneyImage: {
-    width: 40, 
+    width: 40,
     height: 40,
     marginRight: 12,
-    resizeMode: "contain", 
+    resizeMode: "contain",
   },
   iconContainer: {
     backgroundColor: "#e5f9e0",
@@ -222,7 +245,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontWeight: "bold",
   },
-  // Contenedor de la etiqueta
   tagContainer: {
     borderRadius: 12,
     paddingHorizontal: 12,
@@ -230,33 +252,32 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  
+
   promoTag: {
-    backgroundColor: "#d1fae5", 
+    backgroundColor: "#d1fae5",
   },
-  
+
   infoTag: {
-    backgroundColor: "#e0f2fe", 
+    backgroundColor: "#e0f2fe",
   },
   tagText: {
     fontSize: 12,
     fontWeight: "bold",
-    color: "#22c55e", 
+    color: "#22c55e",
   },
 
   sectionContainer: {
+    marginTop: 20,
     marginBottom: 20,
     paddingHorizontal: 10,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#111827",
+    fontSize: 14,
+    fontWeight: 500,
+    color: "#8F92A1",
     marginBottom: 12,
     padding: 10,
     borderRadius: 8,
-    backgroundColor: "#e5f9e0", 
-    textAlign: "center",
     overflow: "hidden",
   },
   emptyText: {
