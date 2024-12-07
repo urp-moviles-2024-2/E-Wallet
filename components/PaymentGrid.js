@@ -7,7 +7,7 @@ const PaymentGrid = ({ products }) => {
   const navigation = useNavigation();
 
   const electricityProduct = products.find(product => product.categoria === "luz");
-  console.log(electricityProduct)
+  const wifiProduct = products.find(product => product.categoria === "wifi");
 
   const handleProductPress = (product) => {
     navigation.navigate("PaymentScreen", { product });
@@ -31,6 +31,7 @@ const PaymentGrid = ({ products }) => {
           label="Internet"
           iconColor="#FF6E40"
           backgroundColor="#F6FAFD"
+          onPress={() => handleProductPress(wifiProduct)}
         />
         <PaymentButton
           iconName="ticket-alt"

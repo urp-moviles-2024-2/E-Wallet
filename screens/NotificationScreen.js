@@ -130,7 +130,7 @@ const NotificationScreen = () => {
 
   return (
     <View style={styles.container}>
-      <NotificationHeader />
+      <NotificationHeader/>
       <View style={styles.notifications}>
         {!hasNotifications ? (
           <View style={styles.emptyContainer}>
@@ -186,7 +186,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderTopRightRadius: 32,
     borderTopLeftRadius: 32,
-    height: "80vh"
   },
   emptyContainer: {
     flex: 1,
