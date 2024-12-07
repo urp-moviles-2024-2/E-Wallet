@@ -108,7 +108,7 @@ const TransactionScreen = () => {
         onChangeText={setAmount}
       />
       <Button title="Confirmar Transacción" onPress={handleTransaction} />
-      <Button title="Volver al Escáner" onPress={() => navigation.goBack()} />
+      <Button title="Volver" onPress={() => navigation.goBack()} />
     </View>
   );
 };

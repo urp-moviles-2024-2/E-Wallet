@@ -45,12 +45,19 @@ const ProfileScreen = () => {
         <Image source={userImage} style={styles.avatar} />
         <Text style={styles.userName}>{userData.nombre}</Text>
         <Text style={styles.email}>{userData.correo}</Text>
-        <Text style={styles.balance}>Saldo disponible: S/ {userData.saldo}</Text>
+        <Text style={styles.balance}>
+          Saldo disponible: S/ {userData.saldo}
+        </Text>
       </View>
 
       {/* QR Code Section */}
       <View style={styles.qrContainer}>
-        <QRCode value={userData.codigoqr || "Sin QR"} bgColor="transparent" fgColor="green" size={300} /> {}
+        <QRCode
+          value={userData.codigoqr || "Valor por defecto"}
+          bgColor="transparent"
+          fgColor="green"
+          size={300}
+        />
         <Text style={styles.qrText}>Código QR</Text>
       </View>
 

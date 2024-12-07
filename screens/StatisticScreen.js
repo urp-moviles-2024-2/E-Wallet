@@ -142,15 +142,6 @@ const StatisticScreen = () => {
 
     return (
         <ScrollView style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <ChevronLeft style={styles.button} color={'#030319'} />
-                </TouchableOpacity>
-                <Text style={styles.title}>Statistic</Text>
-                <TouchableOpacity>
-                    <Settings style={styles.button} color={'#030319'} />
-                </TouchableOpacity>
-            </View>
 
             <View style={styles.incomeExpense}>
                 <View style={styles.elements}>

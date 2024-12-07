@@ -16,10 +16,7 @@ const ProductSection = ({ products }) => {
   return (
     <View style={styles.promoSection}>
       <View style={styles.promoHeader}>
-        <Text style={styles.sectionTitle}>Producst & Services</Text>
-        <TouchableOpacity style={styles.paymentButton}>
-          <Text style={styles.seeMore}>See More</Text>
-        </TouchableOpacity>
+        <Text style={styles.sectionTitle}>Products & Services</Text>
       </View>
       <ScrollView
         horizontal={true} // Habilita el desplazamiento horizontal

@@ -15,7 +15,6 @@ import PaymentGrid from "../components/PaymentGrid";
 import ProductSection from "../components/ProductSection";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
-import { Settings } from "lucide-react-native";
 
 const HomeScreen = () => {
   const [balance, setBalance] = useState(0);
