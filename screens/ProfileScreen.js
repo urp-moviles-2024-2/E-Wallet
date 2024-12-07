@@ -58,11 +58,11 @@ const ProfileScreen = () => {
           />
           <Text style={styles.qrText}>Código QR</Text>
         </View>
-
-        <View style={styles.signOutContainer}>
-          <Button title="Cerrar sesión" onPress={handleSignOut} color="#FF4D4F" />
-        </View>
       </ScrollView>
+
+      <View style={styles.signOutContainer}>
+        <Button title="Cerrar sesión" onPress={handleSignOut} color="#FF4D4F" />
+      </View>
     </SafeAreaView>
   );
 };
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f3f4f6",
-    padding: 16,
+    marginBottom: 90,
   },
   content: {
     paddingVertical: 20,
@@ -118,7 +118,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   signOutContainer: {
-    marginTop: 20,
+    backgroundColor: "#fff",
+    padding: 10,
+    borderTopWidth: 1,
+    borderTopColor: "#e5e7eb",
   },
   loading: {
     textAlign: "center",
@@ -128,4 +131,3 @@ const styles = StyleSheet.create({
 });
 
 export default ProfileScreen;
-

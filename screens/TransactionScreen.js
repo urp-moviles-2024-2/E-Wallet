@@ -43,32 +43,32 @@ const TransactionScreen = () => {
 
   const handleTransaction = async () => {
     const transferAmount = parseFloat(amount);
-    
+  
     if (isNaN(transferAmount) || transferAmount <= 0) {
       Alert.alert("Error", "Ingrese un monto válido.");
       return;
     }
-
+  
     if (transferAmount > senderBalance) {
       Alert.alert("Saldo insuficiente", "No tienes suficiente saldo para realizar esta transacción.");
       return;
     }
-
+  
     try {
       // Genera el ID único para la transacción
       const transactionId = generateTransactionId();
-
+  
       // Actualiza el saldo del remitente
       const senderRef = doc(FIREBASE_DATABASE, "usuarios", user.uid);
       await updateDoc(senderRef, { saldo: senderBalance - transferAmount });
-
+  
       // Actualiza el saldo del destinatario
       const recipientRef = doc(FIREBASE_DATABASE, "usuarios", recipientData.recipientUid);
       await updateDoc(recipientRef, { saldo: recipientData.recipientBalance + transferAmount });
-
+  
       // Crear el registro de transacción
       const transactionRecord = {
-        transactionId,  // Añade el ID único de la transacción
+        transactionId, // Añade el ID único de la transacción
         amount: transferAmount,
         senderUid: user.uid,
         senderName, // Nombre del remitente
@@ -76,24 +76,32 @@ const TransactionScreen = () => {
         recipientName: recipientData.recipientName, // Nombre del destinatario
         timestamp: new Date(),
       };
-      
-
+  
       // Añadir la transacción al array `transacciones` en el remitente y destinatario
       await updateDoc(senderRef, {
-        transacciones: arrayUnion({ ...transactionRecord, type: "Enviado" })
+        transacciones: arrayUnion({ ...transactionRecord, type: "Enviado" }),
       });
       await updateDoc(recipientRef, {
-        transacciones: arrayUnion({ ...transactionRecord, type: "Recibido" })
+        transacciones: arrayUnion({ ...transactionRecord, type: "Recibido" }),
       });
-
-      Alert.alert("Transacción realizada", `Se ha transferido S/ ${transferAmount} a ${recipientData.recipientName}`, [
-        { text: 'OK', onPress: () => navigation.goBack() },
-      ]);
+  
+      // Mensaje de éxito
+      Alert.alert(
+        "Transacción realizada",
+        `Se ha transferido S/ ${transferAmount} a ${recipientData.recipientName}`,
+        [{ text: "OK", onPress: () => navigation.goBack() }]
+      );
     } catch (error) {
       console.error("Error en la transacción:", error);
-      Alert.alert("Error", "Hubo un problema al realizar la transacción.");
+  
+      // Mensaje de fallo
+      Alert.alert(
+        "Error",
+        "Hubo un problema al realizar la transacción. Por favor, intente nuevamente."
+      );
     }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -108,6 +116,7 @@ const TransactionScreen = () => {
         onChangeText={setAmount}
       />
       <Button title="Confirmar Transacción" onPress={handleTransaction} />
+
       <Button title="Volver" onPress={() => navigation.goBack()} />
     </View>
   );
