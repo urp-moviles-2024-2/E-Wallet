@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Button, Alert, Image } from "react-native";
+import { View, Text, StyleSheet, Button, Alert, Image, TouchableOpacity } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
 import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 
@@ -28,7 +28,10 @@ const PaymentScreen = ({ route, navigation }) => {
         const userBalance = userData.saldo || 0;
 
         if (userBalance < product.precio) {
-          Alert.alert("Saldo insuficiente", "No tienes saldo suficiente para realizar esta compra.");
+          Alert.alert(
+            "Saldo insuficiente",
+            "No tienes saldo suficiente para realizar esta compra."
+          );
           return;
         }
 
@@ -60,24 +63,11 @@ const PaymentScreen = ({ route, navigation }) => {
     }
   };
 
-  const getImageSource = (fuente) => {
-    switch (fuente) {
-      case "Starbucks":
-        return require('../assets/starbucks-logo.png');
-      case "Netflix":
-        return require('../assets/netflix_logo.png');
-      case "Enel":
-        return require('../assets/enel_logo.png');
-      default:
-        return require('../assets/popeyes_logo.png');
-    }
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Comprar Producto</Text>
       <Image
-        source={getImageSource(product.fuente)}
+        source={product.imagen}
         style={styles.productImage}
       />
       <Text style={styles.productName}>Producto: {product.nombre}</Text>
@@ -85,8 +75,15 @@ const PaymentScreen = ({ route, navigation }) => {
       <Text style={styles.productQuantity}>
         Cantidad disponible: {product.cantidad}
       </Text>
-      <Button title="Comprar" onPress={handlePayment} />
-      <Button title="Cancelar" onPress={() => navigation.goBack()} color="red" />
+
+      {/* X en la esquina superior derecha */}
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButton}>
+        <Text style={styles.closeText}>X</Text>
+      </TouchableOpacity>
+
+      <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}>
+        <Button width="auto" title="Comprar" onPress={handlePayment}/>
+      </View>
     </View>
   );
 };
@@ -97,6 +94,12 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 40,
     backgroundColor: "#105D38",
+    alignItems: "center",
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
   },
   title: {
     fontSize: 24,
@@ -105,7 +108,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: "center",
   },
-  productImage:{
+  productImage: {
     width: 200,
     height: 200,
   },
@@ -123,6 +126,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 16,
     color: "#f5f5f5",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 40,
+    right: 16,
+    zIndex: 1, // Asegura que la X esté sobre otros elementos
+  },
+  closeText: {
+    fontSize: 30,
+    color: "#fff",
+    fontWeight: "bold",
+    backgroundColor: "red", // Quita el borde de la X
+    paddingHorizontal: 10,
+    borderRadius: 50, // Ajusta el radio de la X
+    borderWidth: 1,
+    borderColor: "#fff",
   },
 });
 

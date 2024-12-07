@@ -50,7 +50,7 @@ const ProfileScreen = () => {
 
       {/* QR Code Section */}
       <View style={styles.qrContainer}>
-        <QRCode value={userData.codigoqr || "Sin QR"} size={300} /> {}
+        <QRCode value={userData.codigoqr || "Sin QR"} bgColor="transparent" fgColor="green" size={300} /> {}
         <Text style={styles.qrText}>Código QR</Text>
       </View>
 

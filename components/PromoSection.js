@@ -1,33 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { TouchableOpacity, View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
-
-
-
-const colors = ["#FFD2A6", "#FFAE58", "#4CD080"]
-
-
+import { getColors } from "react-native-image-colors";
 
 const PromoSection = ({ products }) => {
   const navigation = useNavigation();
-  
-  const getRandomColor = () => {
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
-  const getImageSource = (fuente) => {
-    switch (fuente) {
-      case "Starbucks":
-        return require('../assets/starbucks-logo.png');
-      case "Netflix":
-        return require('../assets/netflix_logo.png');
-      case "Enel":
-        return require('../assets/enel_logo.png');
-      default:
+  const [productColors, setProductColors] = useState({});
+
+  // Función para obtener el color dominante de una imagen
+  const getDominantColor = async (imageUri, productId) => {
+    try {
+      const colors = await getColors(imageUri, {
+        fallback: "#000000", // Color por defecto si no se puede extraer
+      });
+      setProductColors((prevColors) => ({
+        ...prevColors,
+        [productId]: colors.dominant, // Almacena el color dominante por producto
+      }));
+    } catch (error) {
+      console.error("Error al obtener colores", error);
+      setProductColors((prevColors) => ({
+        ...prevColors,
+        [productId]: "#000000", // Color por defecto en caso de error
+      }));
     }
-  };
+  }; 
+
   const handleProductPress = (product) => {
     navigation.navigate("PaymentScreen", { product });
   };
+
+  useEffect(() => {
+    // Llamada para obtener el color dominante de cada imagen de los productos
+    products.forEach((item) => {
+      getDominantColor(item.imagen, item.id);
+    });
+  }, [products]);
+
   return (
     <View style={styles.promoSection}>
       <View style={styles.promoHeader}>
@@ -60,7 +69,7 @@ const PromoSection = ({ products }) => {
         {products.map((item) => (
           <TouchableOpacity
             key={item.id}
-            style={[styles.productCard, { backgroundColor: getRandomColor() }]}
+            style={[styles.productCard, { backgroundColor: productColors[item.id] || '#f5f5f5' }]} // Usamos el color dominante o un color por defecto
             onPress={() => handleProductPress(item)}
           >
             <View style={styles.promoInformation}>
@@ -70,7 +79,7 @@ const PromoSection = ({ products }) => {
             </View>
             <View style={styles.containerPromoImage}>
               <Image
-                source={getImageSource(item.fuente)}
+                source={{ uri: item.imagen }} // Cargar la imagen del producto
                 style={styles.promoImage}
               />
             </View>
