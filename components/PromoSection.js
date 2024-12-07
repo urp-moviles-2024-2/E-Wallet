@@ -26,21 +26,6 @@ const PromoSection = ({ products }) => {
         showsHorizontalScrollIndicator={false} // Oculta el indicador de scroll
         contentContainerStyle={styles.scrollContent} // Espaciado para los elementos
       >
-        <View style={styles.promoCard}>
-          <View style={styles.promoInformation}>
-            <Text style={styles.promoTitle}>30% OFF</Text>
-            <Text style={styles.promoSubtitle}>Black Friday deal</Text>
-            <Text style={styles.promoDescription}>
-              Get discount for every topup, transfer and payment
-            </Text>
-          </View>
-          <View style={styles.containerPromoImage}>
-            <Image
-              source={require('../assets/imagen-promo.png')}
-              style={styles.promoImage}
-            />
-          </View>
-        </View>
 
         {products.map((item) => (
           <TouchableOpacity
