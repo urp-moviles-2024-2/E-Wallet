@@ -15,7 +15,6 @@ import { FIREBASE_AUTH } from "./config/FirebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import PaymentScreen from "./screens/PaymentScreen";
 import TransactionHistoryScreen from "./screens/TransactionHistoryScreen";
-import StatisticScreen from "./screens/StatisticScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -66,7 +65,6 @@ const App = () => {
         <Tab.Screen name="Transaction" component={TransactionScreen} />
         <Tab.Screen name="PaymentScreen" component={PaymentScreen} />
         <Tab.Screen name="History" component={TransactionHistoryScreen} />
-        <Tab.Screen name="Statistics" component={StatisticScreen} />
       </Tab.Navigator>
       
       ) : (
