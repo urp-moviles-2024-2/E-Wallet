@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Button, Alert, Image, TouchableOpacity } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
 import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
@@ -6,6 +6,7 @@ import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 const PaymentScreen = ({ route, navigation }) => {
   const { product } = route.params;
   const user = FIREBASE_AUTH.currentUser;
+  const [paymentStatus, setPaymentStatus] = useState(null);  // Estado para el mensaje de pago
 
   const handlePayment = async () => {
     if (!user) {
@@ -54,7 +55,11 @@ const PaymentScreen = ({ route, navigation }) => {
           cantidad: product.cantidad - 1,
         });
 
-        Alert.alert("Éxito", "Compra realizada con éxito.");
+        setPaymentStatus("Compra realizada con éxito.");  // Mostrar el mensaje de pago exitoso
+        setTimeout(() => {
+          setPaymentStatus(null);  // Ocultar el mensaje después de 3 segundos
+        }, 3000);
+
         navigation.goBack(); // Regresar a la pantalla anterior
       }
     } catch (error) {
@@ -76,13 +81,16 @@ const PaymentScreen = ({ route, navigation }) => {
         Cantidad disponible: {product.cantidad}
       </Text>
 
+      {/* Mensaje de pago exitoso */}
+      {paymentStatus && <Text style={styles.paymentMessage}>{paymentStatus}</Text>}
+
       {/* X en la esquina superior derecha */}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButton}>
         <Text style={styles.closeText}>X</Text>
       </TouchableOpacity>
 
       <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}>
-        <Button width="auto" title="Comprar" onPress={handlePayment}/>
+        <Button width="auto" title="Comprar" onPress={handlePayment} />
       </View>
     </View>
   );
@@ -94,11 +102,6 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 40,
     backgroundColor: "#105D38",
-    alignItems: "center",
-  },
-  button: {
-    padding: 10,
-    borderRadius: 5,
     alignItems: "center",
   },
   title: {
@@ -142,6 +145,13 @@ const styles = StyleSheet.create({
     borderRadius: 50, // Ajusta el radio de la X
     borderWidth: 1,
     borderColor: "#fff",
+  },
+  paymentMessage: {
+    fontSize: 18,
+    color: "#28a745",  // Color verde para el mensaje de éxito
+    marginTop: 20,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 

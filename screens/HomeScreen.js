@@ -58,7 +58,7 @@ const HomeScreen = () => {
   }, []);
 
   const handleProductPress = (product) => {
-    navigation.navigate("PaymentScreen", { product });
+    navigation.navigate("Payment", { product });
   };
 
   return (

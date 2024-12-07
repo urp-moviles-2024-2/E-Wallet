@@ -11,7 +11,7 @@ const ProductSection = ({ products }) => {
   };
   
   const handleProductPress = (product) => {
-    navigation.navigate("PaymentScreen", { product });
+    navigation.navigate("Payment", { product });
   };
   return (
     <View style={styles.promoSection}>

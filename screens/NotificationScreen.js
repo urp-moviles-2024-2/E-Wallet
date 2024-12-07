@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, FlatList, Image, ScrollView, SafeAreaView } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import moneyIcon from '../assets/money.png';
-
-
 
 const images = [
   require("../assets/hot-sale.png"),
@@ -20,12 +18,11 @@ const NotificationScreen = () => {
   });
   const user = FIREBASE_AUTH.currentUser;
 
- 
   const calculateDaysDifference = (date) => {
     const now = new Date();
-    const itemDate = new Date(date.seconds * 1000); 
+    const itemDate = new Date(date.seconds * 1000);
     const diffInTime = now - itemDate;
-    return Math.floor(diffInTime / (1000 * 60 * 60 * 24)); 
+    return Math.floor(diffInTime / (1000 * 60 * 60 * 24));
   };
 
   useEffect(() => {
@@ -40,7 +37,7 @@ const NotificationScreen = () => {
           id: doc.id,
           type: "Promo", // Identifica como promoción
           ...doc.data(),
-          fechacreacion: doc.data().fechacreacion || new Date(), 
+          fechacreacion: doc.data().fechacreacion || new Date(),
         }));
 
         allNotifications = allNotifications.concat(promotions);
@@ -54,14 +51,13 @@ const NotificationScreen = () => {
             const userData = userSnapshot.data();
             const transactions = (userData.transacciones || []).map((transaction) => ({
               ...transaction,
-              type: "Transaction", 
+              type: "Transaction",
             }));
 
             allNotifications = allNotifications.concat(transactions);
           }
         }
 
-        
         const today = [];
         const yesterday = [];
         const last7Days = [];
@@ -87,50 +83,42 @@ const NotificationScreen = () => {
     fetchNotifications();
   }, [user]);
 
-  
-  const renderNotificationItem = ({ item }) => {
-    return (
-      <View style={styles.notificationCard}>
-        {}
+  const renderNotificationItem = ({ item }) => (
+    <View style={styles.notificationCard}>
+      {item.type === "Promo" ? (
+        <Image source={images[Math.floor(Math.random() * images.length)]} style={styles.promoImage} />
+      ) : (
+        <Image source={moneyIcon} style={styles.moneyImage} />
+      )}
+
+      {/* Texto principal de la notificación */}
+      <View style={styles.textContainer}>
         {item.type === "Promo" ? (
-          <Image source={images[Math.floor(Math.random() * images.length)]} style={styles.promoImage} />
+          <>
+            <Text style={styles.title}>{item.categoria.toUpperCase()}</Text>
+            <Text style={styles.subtitle}>Descuento: {item.descuento}%</Text>
+          </>
         ) : (
-          <Image source={moneyIcon} style={styles.moneyImage} /> 
+          <>
+            <Text style={styles.title}>Transaction</Text>
+            <Text style={styles.subtitle}>
+              {item.type === "Recibido" ? "De" : "A"}:{" "}
+              {item.type === "Recibido" ? item.senderName : item.recipientName}
+            </Text>
+            <Text style={styles.transactionAmount}>Monto: S/ {item.amount}</Text>
+          </>
         )}
-  
-        {/* Texto principal de la notificación */}
-        <View style={styles.textContainer}>
-          {item.type === "Promo" ? (
-            <>
-              <Text style={styles.title}>{item.categoria.toUpperCase()}</Text>
-              <Text style={styles.subtitle}>Descuento: {item.descuento}%</Text>
-            </>
-          ) : (
-            <>
-              <Text style={styles.title}>Transaction</Text>
-              <Text style={styles.subtitle}>
-                {item.type === "Recibido" ? "De" : "A"}:{" "}
-                {item.type === "Recibido" ? item.senderName : item.recipientName}
-              </Text>
-              <Text style={styles.transactionAmount}>Monto: S/ {item.amount}</Text>
-            </>
-          )}
-        </View>
-  
-        {}
-        <View style={[styles.tagContainer, item.type === "Promo" ? styles.promoTag : styles.infoTag]}>
-          <Text style={styles.tagText}>{item.type === "Promo" ? "Promo" : "Info"}</Text>
-        </View>
       </View>
-    );
-  };
-  
-  
+
+      <View style={[styles.tagContainer, item.type === "Promo" ? styles.promoTag : styles.infoTag]}>
+        <Text style={styles.tagText}>{item.type === "Promo" ? "Promo" : "Info"}</Text>
+      </View>
+    </View>
+  );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.notifications}>
-        {}
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.notifications}>
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>TODAY</Text>
           <FlatList
@@ -141,7 +129,6 @@ const NotificationScreen = () => {
           />
         </View>
 
-        {}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>YESTERDAY</Text>
           <FlatList
@@ -152,7 +139,6 @@ const NotificationScreen = () => {
           />
         </View>
 
-        {}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>LAST 7 DAYS</Text>
           <FlatList
@@ -162,13 +148,20 @@ const NotificationScreen = () => {
             ListEmptyComponent={<Text style={styles.emptyText}>No hay notificaciones en los últimos 7 días.</Text>}
           />
         </View>
-      </View>
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  
+  container: {
+    flex: 1,
+    backgroundColor: "#f3f4f6",
+  },
+  notifications: {
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+  },
   notificationCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -184,22 +177,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   moneyImage: {
-    width: 40, 
+    width: 40,
     height: 40,
     marginRight: 12,
-    resizeMode: "contain", 
-  },
-  iconContainer: {
-    backgroundColor: "#e5f9e0",
-    borderRadius: 8,
-    width: 50,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  iconText: {
-    fontSize: 16,
+    resizeMode: "contain",
   },
   textContainer: {
     flex: 1,
@@ -220,7 +201,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontWeight: "bold",
   },
-  // Contenedor de la etiqueta
   tagContainer: {
     borderRadius: 12,
     paddingHorizontal: 12,
@@ -228,23 +208,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  
   promoTag: {
-    backgroundColor: "#d1fae5", 
+    backgroundColor: "#d1fae5",
   },
-  
   infoTag: {
-    backgroundColor: "#e0f2fe", 
+    backgroundColor: "#e0f2fe",
   },
   tagText: {
     fontSize: 12,
     fontWeight: "bold",
-    color: "#22c55e", 
+    color: "#111827",
   },
-
   sectionContainer: {
     marginBottom: 20,
-    paddingHorizontal: 10,
   },
   sectionTitle: {
     fontSize: 18,
@@ -253,7 +229,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     padding: 10,
     borderRadius: 8,
-    backgroundColor: "#e5f9e0", 
+    backgroundColor: "#e5f9e0",
     textAlign: "center",
     overflow: "hidden",
   },
@@ -264,8 +240,5 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 });
-
-
-
 
 export default NotificationScreen;
