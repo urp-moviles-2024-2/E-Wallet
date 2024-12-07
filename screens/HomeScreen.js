@@ -12,7 +12,7 @@ import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import QuickActions from "../components/QuickActions";
 import PaymentGrid from "../components/PaymentGrid";
-import PromoSection from "../components/PromoSection";
+import ProductSection from "../components/ProductSection";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { Settings } from "lucide-react-native";
@@ -85,7 +85,7 @@ const HomeScreen = () => {
         {/* Quick Actions and Promotions */}
         <QuickActions />
         <PaymentGrid />
-        <PromoSection products={products} />
+        <ProductSection products={products} />
 
         {/* Product List */}
         {/* <Text style={styles.sectionHeading}>Productos Disponibles</Text>

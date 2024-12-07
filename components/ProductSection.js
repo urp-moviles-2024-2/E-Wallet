@@ -3,7 +3,7 @@ import { TouchableOpacity, View, Text, StyleSheet, Image, ScrollView } from 'rea
 import { useNavigation } from "@react-navigation/native";
 
 const colors = ["#FFD2A6", "#FFAE58", "#4CD080"]
-const PromoSection = ({ products }) => {
+const ProductSection = ({ products }) => {
   const navigation = useNavigation();
   
   const getRandomColor = () => {
@@ -16,7 +16,7 @@ const PromoSection = ({ products }) => {
   return (
     <View style={styles.promoSection}>
       <View style={styles.promoHeader}>
-        <Text style={styles.sectionTitle}>Promo & Discount</Text>
+        <Text style={styles.sectionTitle}>Producst & Services</Text>
         <TouchableOpacity style={styles.paymentButton}>
           <Text style={styles.seeMore}>See More</Text>
         </TouchableOpacity>
@@ -147,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PromoSection;
+export default ProductSection;
