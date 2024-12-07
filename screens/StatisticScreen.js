@@ -1,48 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
-import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
+import { useState, useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
+import { Alert } from "react-native";
+import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Settings, ChevronLeft } from 'lucide-react-native';
-import { useNavigation } from '@react-navigation/native';
+import PieChart from 'react-native-pie-chart';
+import { startOfWeek, endOfWeek, parseISO, getDay, isSameWeek } from 'date-fns';
 
 const StatisticScreen = () => {
     const [transactions, setTransactions] = useState([]);
+    const [incomeByDay, setIncomeByDay] = useState({
+        Monday: 0, Tuesday: 0, Wednesday: 0, Thursday: 0, Friday: 0, Saturday: 0, Sunday: 0
+    });
+    const [expenseByDay, setExpenseByDay] = useState({
+        Monday: 0, Tuesday: 0, Wednesday: 0, Thursday: 0, Friday: 0, Saturday: 0, Sunday: 0
+    });
     const [income, setIncome] = useState(0);
     const [expense, setExpense] = useState(0);
-    const [selectedPeriod, setSelectedPeriod] = useState('Weekly');
+    const [pieChartData, setPieChartData] = useState([]);
     const user = FIREBASE_AUTH.currentUser;
-    const navigation = useNavigation();
-
-    // Datos simulados para el gráfico de barras
-    const weeklyData = [
-        { day: 'Mon', income: 800, expense: 400 },
-        { day: 'Tue', income: 1200, expense: 300 },
-        { day: 'Wed', income: 600, expense: 200 },
-        { day: 'Thu', income: 900, expense: 500 },
-        { day: 'Fri', income: 1100, expense: 300 },
-        { day: 'Sat', income: 700, expense: 400 },
-        { day: 'Sun', income: 500, expense: 200 },
-    ];
-
-    // Datos simulados para gastos recientes
-    const recentExpenses = [
-        {
-            id: 1,
-            name: 'Starbucks Coffee',
-            date: 'Dec 2, 2020',
-            time: '3:09 PM',
-            amount: 156.00,
-            icon: '☕'
-        },
-        {
-            id: 2,
-            name: 'Netflix Subscription',
-            date: 'Dec 2, 2020',
-            time: '3:09 PM',
-            amount: 87.00,
-            icon: '🎬'
-        }
-    ];
 
     useEffect(() => {
         const fetchTransactions = async () => {
@@ -58,21 +34,45 @@ const StatisticScreen = () => {
                 if (userSnapshot.exists()) {
                     const userData = userSnapshot.data();
                     const userTransactions = userData.transacciones || [];
+                    const pieData = processTransactions(userTransactions);
+                    setPieChartData(pieData);
                     setTransactions(userTransactions);
 
                     let totalIncome = 0;
                     let totalExpense = 0;
 
+                    const incomeByDayTemp = {
+                        Monday: 0, Tuesday: 0, Wednesday: 0, Thursday: 0, Friday: 0, Saturday: 0, Sunday: 0
+                    };
+                    const expenseByDayTemp = {
+                        Monday: 0, Tuesday: 0, Wednesday: 0, Thursday: 0, Friday: 0, Saturday: 0, Sunday: 0
+                    };
+
                     userTransactions.forEach(transaction => {
-                        if (transaction.type === "Recibido") {
-                            totalIncome += transaction.amount;
-                        } else if (transaction.type === "Enviado") {
-                            totalExpense += transaction.amount;
+                        const timestamp = transaction.timestamp;
+
+                        const transactionDate = timestamp instanceof Date ? timestamp : timestamp.toDate();
+
+                        const startOfThisWeek = startOfWeek(new Date(), { weekStartsOn: 1 });
+
+                        if (isSameWeek(transactionDate, startOfThisWeek, { weekStartsOn: 1 })) {
+                            const dayOfWeek = getDay(transactionDate);
+                            const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][dayOfWeek];
+
+                            if (transaction.type === "Recibido") {
+                                totalIncome += transaction.amount;
+                                incomeByDayTemp[dayName] += transaction.amount;
+                            } else if (transaction.type === "Enviado") {
+                                totalExpense += transaction.amount;
+                                expenseByDayTemp[dayName] += transaction.amount;
+                            }
                         }
                     });
 
                     setIncome(totalIncome);
                     setExpense(totalExpense);
+                    setIncomeByDay(incomeByDayTemp);
+                    setExpenseByDay(expenseByDayTemp);
                 }
             } catch (error) {
                 console.error("Error al obtener las transacciones:", error);
@@ -82,6 +82,12 @@ const StatisticScreen = () => {
 
         fetchTransactions();
     }, [user]);
+
+    const weeklyData = Object.keys(incomeByDay).map(day => ({
+        day,
+        income: incomeByDay[day],
+        expense: expenseByDay[day],
+    }));
 
     const renderBarChart = () => (
         <View style={styles.barChartContainer}>
@@ -97,50 +103,42 @@ const StatisticScreen = () => {
         </View>
     );
 
-    const renderCategoryChart = () => (
-        <View style={styles.categoryChartContainer}>
-            <Text style={styles.sectionTitle}>Category Chart</Text>
-            <Text style={styles.subTitle}>Last 7 days expenses</Text>
-            <View style={styles.donutChart}>
-                {/* Placeholder for donut chart - you might want to use a library like react-native-svg-charts */}
-                <View style={styles.donutPlaceholder}>
-                    <Text style={styles.donutTotal}>~$312.00</Text>
-                </View>
-            </View>
-            <View style={styles.categoryLegend}>
-                <View style={styles.legendItem}>
-                    <View style={[styles.legendColor, { backgroundColor: '#FFA500' }]} />
-                    <Text style={styles.legendText}>Transportation</Text>
-                </View>
-                <View style={styles.legendItem}>
-                    <View style={[styles.legendColor, { backgroundColor: '#105D38' }]} />
-                    <Text style={styles.legendText}>Shopping</Text>
-                </View>
-                <View style={styles.legendItem}>
-                    <View style={[styles.legendColor, { backgroundColor: '#228B22' }]} />
-                    <Text style={styles.legendText}>Coffee</Text>
-                </View>
-            </View>
-        </View>
-    );
+    const processTransactions = (transactions) => {
+        const filteredTransactions = transactions.filter(transaction => 
+            transaction.type === "Enviado" && transaction.nombreProducto
+        );
 
-    const renderRecentExpenses = () => (
-        <View style={styles.recentExpensesContainer}>
-            <Text style={styles.sectionTitle}>Recent Expenses</Text>
-            {recentExpenses.map((expense) => (
-                <View key={expense.id} style={styles.expenseItem}>
-                    <View style={styles.expenseIcon}>
-                        <Text style={styles.iconText}>{expense.icon}</Text>
-                    </View>
-                    <View style={styles.expenseInfo}>
-                        <Text style={styles.expenseName}>{expense.name}</Text>
-                        <Text style={styles.expenseDate}>{expense.date} • {expense.time}</Text>
-                    </View>
-                    <Text style={styles.expenseAmount}>-${expense.amount.toFixed(2)}</Text>
-                </View>
-            ))}
-        </View>
-    );
+        console.log(filteredTransactions)
+
+        const productCounts = filteredTransactions.reduce((acc, transaction) => {
+            const product = transaction.nombreProducto;
+            if (acc[product]) {
+                acc[product] += 1;
+            } else {
+                acc[product] = 1;
+            }
+            return acc;
+        }, {});
+
+        const pieChartData = Object.keys(productCounts).map(product => ({
+            name: product,
+            value: productCounts[product],
+            color: getRandomColor()
+        }));
+
+        console.log(pieChartData)
+
+        return pieChartData;
+    };
+
+    const getRandomColor = () => {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    };
 
     return (
         <ScrollView style={styles.container}>
@@ -164,19 +162,31 @@ const StatisticScreen = () => {
                     <Text style={styles.cashElement}>${expense.toLocaleString()}</Text>
                 </View>
             </View>
-
-            <View style={styles.periodSelector}>
-                <TouchableOpacity 
-                    style={[styles.periodButton, selectedPeriod === 'Weekly' && styles.selectedPeriod]}
-                    onPress={() => setSelectedPeriod('Weekly')}
-                >
-                    <Text style={styles.periodText}>Weekly</Text>
-                </TouchableOpacity>
-            </View>
-
+            <Text style={styles.title}>Statistic Overview</Text>
             {renderBarChart()}
-            {renderCategoryChart()}
-            {renderRecentExpenses()}
+            <Text style={styles.title}>Category Chart</Text>
+            {pieChartData.length > 0 ? (
+                <View style={styles.chartContainer}>
+                <PieChart
+                    widthAndHeight={250}
+                    series={pieChartData.map(item => item.value)}
+                    sliceColor={pieChartData.map(item => item.color)}
+                    coverRadius={0.5}
+                    coverFill={'#FFF'}
+                    style={styles.chart}
+                />
+                <View style={styles.legend}>
+                    {pieChartData.map((item, index) => (
+                        <View key={index} style={styles.legendItem}>
+                            <View style={[styles.legendColor, { backgroundColor: item.color }]} />
+                            <Text style={styles.legendText}>{item.name}</Text>
+                        </View>
+                    ))}
+                </View>
+            </View>
+            ) : (
+                <Text>No hay transacciones para mostrar.</Text>
+            )}
         </ScrollView>
     );
 };
@@ -365,6 +375,34 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: '#030319',
     },
+    statsContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    chartContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
+    chart: {
+        marginBottom: 20,
+    },
+    legend: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    legendItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 5,
+    },
+    legendColor: {
+        width: 20,
+        height: 20,
+        borderRadius: 10,
+    },
+    legendText: {
+        marginLeft: 10,
+    }
 });
 
 export default StatisticScreen;
