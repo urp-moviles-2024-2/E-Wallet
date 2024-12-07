@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from "react
 import { FIREBASE_AUTH, FIREBASE_DATABASE } from "../config/FirebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 
-const TransactionHistoryScreen = () => {
+const TransactionHistoryScreen = ({ navigation }) => {
   const [transactions, setTransactions] = useState([]);
   const user = FIREBASE_AUTH.currentUser;
 
@@ -34,6 +34,15 @@ const TransactionHistoryScreen = () => {
     fetchTransactions();
   }, [user]);
 
+  const handleTransfer = (recipientData) => {
+    // Asegúrate de que recipientData contiene la información del usuario
+    if (recipientData && recipientData.recipientUid) {
+      navigation.navigate("Transaction", { recipientData });
+    } else {
+      console.log("Error: No hay datos de usuario.");
+    }
+  };
+
   const renderTransaction = ({ item }) => (
     <View style={styles.transactionCard}>
       <Text style={styles.transactionType}>{item.type}</Text>
@@ -45,6 +54,16 @@ const TransactionHistoryScreen = () => {
         Fecha: {new Date(item.timestamp.seconds * 1000).toLocaleDateString()} -{" "}
         {new Date(item.timestamp.seconds * 1000).toLocaleTimeString()}
       </Text>
+
+      {/* Mostrar el botón Transferir solo si el destinatario es un usuario */}
+      {item.type === "Enviado" && item.recipientUid && (
+        <TouchableOpacity
+          style={styles.transferButton}
+          onPress={() => handleTransfer(item)} // Pasa los datos del destinatario
+        >
+          <Text style={styles.transferButtonText}>Transferir</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 
@@ -57,7 +76,8 @@ const TransactionHistoryScreen = () => {
         <FlatList
           data={transactions}
           renderItem={renderTransaction}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item, index) => item.transactionId || index.toString()}
+          contentContainerStyle={styles.flatListContent} // Asegura espacio adicional al final
         />
       )}
     </View>
@@ -101,6 +121,20 @@ const styles = StyleSheet.create({
     color: "#9ca3af",
     textAlign: "center",
     marginTop: 20,
+  },
+  transferButton: {
+    marginTop: 12,
+    backgroundColor: "#1e3a8a",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+  },
+  transferButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  flatListContent: {
+    paddingBottom: 20,  // Asegura que haya espacio extra al final
   },
 });
 

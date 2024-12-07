@@ -67,7 +67,7 @@ const PaymentScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Comprar Producto</Text>
       <Image
-        source={product.imagen}
+        source={{ uri: product.imagen}}
         style={styles.productImage}
       />
       <Text style={styles.productName}>Producto: {product.nombre}</Text>

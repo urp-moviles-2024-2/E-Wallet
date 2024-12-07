@@ -1,42 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
-import { getColors } from "react-native-image-colors";
 
+const colors = ["#FFD2A6", "#FFAE58", "#4CD080"]
 const PromoSection = ({ products }) => {
   const navigation = useNavigation();
-  const [productColors, setProductColors] = useState({});
-
-  // Función para obtener el color dominante de una imagen
-  const getDominantColor = async (imageUri, productId) => {
-    try {
-      const colors = await getColors(imageUri, {
-        fallback: "#000000", // Color por defecto si no se puede extraer
-      });
-      setProductColors((prevColors) => ({
-        ...prevColors,
-        [productId]: colors.dominant, // Almacena el color dominante por producto
-      }));
-    } catch (error) {
-      console.error("Error al obtener colores", error);
-      setProductColors((prevColors) => ({
-        ...prevColors,
-        [productId]: "#000000", // Color por defecto en caso de error
-      }));
-    }
-  }; 
-
+  
+  const getRandomColor = () => {
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+  
   const handleProductPress = (product) => {
     navigation.navigate("PaymentScreen", { product });
   };
-
-  useEffect(() => {
-    // Llamada para obtener el color dominante de cada imagen de los productos
-    products.forEach((item) => {
-      getDominantColor(item.imagen, item.id);
-    });
-  }, [products]);
-
   return (
     <View style={styles.promoSection}>
       <View style={styles.promoHeader}>
@@ -69,7 +45,7 @@ const PromoSection = ({ products }) => {
         {products.map((item) => (
           <TouchableOpacity
             key={item.id}
-            style={[styles.productCard, { backgroundColor: productColors[item.id] || '#f5f5f5' }]} // Usamos el color dominante o un color por defecto
+            style={[styles.productCard, { backgroundColor: getRandomColor() }]}
             onPress={() => handleProductPress(item)}
           >
             <View style={styles.promoInformation}>
@@ -79,7 +55,7 @@ const PromoSection = ({ products }) => {
             </View>
             <View style={styles.containerPromoImage}>
               <Image
-                source={{ uri: item.imagen }} // Cargar la imagen del producto
+                source={{ uri: item.imagen }}
                 style={styles.promoImage}
               />
             </View>

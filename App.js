@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -20,7 +19,7 @@ import TransactionHistoryScreen from "./screens/TransactionHistoryScreen";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const App = () => {
+const App = () => { 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -48,7 +47,6 @@ const App = () => {
             borderBottomLeftRadius: 20, // Ajusta el radio según prefieras
             borderBottomRightRadius: 20,
             height: 80, // Opcional: ajusta la altura del header si es necesario
-            overflow: 'hidden', // Asegura que los bordes redondeados se apliquen correctamente
           },
           headerTitleStyle: {
             color: 'white',
@@ -66,7 +64,7 @@ const App = () => {
         <Tab.Screen name="Profile" component={ProfileScreen} />
         <Tab.Screen name="Transaction" component={TransactionScreen} />
         <Tab.Screen name="PaymentScreen" component={PaymentScreen} />
-        <Tab.Screen name="TransactionHistoryScreen" component={TransactionHistoryScreen} />
+        <Tab.Screen name="History" component={TransactionHistoryScreen} />
       </Tab.Navigator>
       
       ) : (
